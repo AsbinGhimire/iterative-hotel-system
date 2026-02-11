@@ -1,0 +1,30 @@
+{% extends 'hotel/base.html' %}
+
+{% block content %}
+<div class="text-center">
+    <h1 class="mb-3">Hotel Information Management System</h1>
+    <p class="text-muted">Manage rooms, bookings, and hotel operations efficiently.</p>
+
+    <div class="row mt-5">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5>Room Management</h5>
+                    <p>View, add, edit, and delete rooms.</p>
+                    <a href="{% url 'room_list' %}" class="btn btn-primary">Manage Rooms</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5>Booking Management</h5>
+                    <p>Handle reservations and check-ins.</p>
+                    <a href="{% url 'booking_list' %}" class="btn btn-primary">Manage Bookings</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

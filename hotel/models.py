@@ -1,0 +1,87 @@
+from django.db import models
+from django.core.exceptions import ValidationError
+from datetime import timedelta
+
+class Room(models.Model):
+    ROOM_TYPES = [
+        ('Single', 'Single'),
+        ('Double', 'Double'),
+        ('Deluxe', 'Deluxe'),
+    ]
+
+    room_number = models.CharField(max_length=10, unique=True)
+    room_type = models.CharField(max_length=20, choices=ROOM_TYPES)
+    price_per_night = models.DecimalField(max_digits=8, decimal_places=2)
+    is_available = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"Room {self.room_number}"
+
+
+class Customer(models.Model):
+    name = models.CharField(max_length=100)
+    phone = models.CharField(max_length=15)
+    address = models.TextField()
+
+    def __str__(self):
+        return self.name
+
+
+class Booking(models.Model):
+    STATUS_CHOICES = [
+        ('Booked', 'Booked'),
+        ('Checked-In', 'Checked-In'),
+        ('Checked-Out', 'Checked-Out'),
+        ('Cancelled', 'Cancelled'),
+    ]
+
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    room = models.ForeignKey(Room, on_delete=models.CASCADE)
+    check_in = models.DateField()
+    check_out = models.DateField()
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Booked')
+
+class Payment(models.Model):
+    booking = models.OneToOneField(Booking, on_delete=models.CASCADE)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    payment_date = models.DateField(auto_now_add=True)
+    payment_method = models.CharField(max_length=20)
+
+    def save(self, *args, **kwargs):
+        nights = (self.booking.check_out - self.booking.check_in).days
+        self.amount = nights * self.booking.room.price_per_night
+        super().save(*args, **kwargs)
+
+
+    def __str__(self):
+        return f"Payment for {self.booking}"
+
+
+    def clean(self):
+        if self.check_out <= self.check_in:
+            raise ValidationError("Check-out date must be after check-in date.")
+
+        overlapping = Booking.objects.filter(
+            room=self.room,
+            check_in__lt=self.check_out,
+            check_out__gt=self.check_in
+        ).exclude(id=self.id)
+
+        if overlapping.exists():
+            raise ValidationError("This room is already booked for the selected dates.")
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+
+        if self.status in ['Booked', 'Checked-In']:
+            self.room.is_available = False
+        elif self.status == 'Checked-Out':
+            self.room.is_available = True
+
+        self.room.save()
+        super().save(*args, **kwargs)
+
+    
+
+    def __str__(self):
+        return f"{self.customer} - {self.room}"
