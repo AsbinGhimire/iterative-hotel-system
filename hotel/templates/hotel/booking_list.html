@@ -28,6 +28,7 @@
             </td>
             <td>
                 <a href="{% url 'booking_edit' booking.id %}" class="btn btn-sm btn-warning">Edit</a>
+                <a href="{% url 'booking_delete' booking.id %}" class="btn btn-sm btn-danger">Delete</a>
             </td>
         </tr>
         {% endfor %}

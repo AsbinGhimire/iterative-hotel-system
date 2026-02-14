@@ -53,3 +53,9 @@ class BookingUpdateView(LoginRequiredMixin, UpdateView):
     fields = '__all__'
     success_url = reverse_lazy('booking_list')
     template_name = 'hotel/booking_form.html'
+
+
+class BookingDeleteView(LoginRequiredMixin, DeleteView):
+    model = Booking
+    success_url = reverse_lazy('booking_list')
+    template_name = 'hotel/booking_confirm_delete.html'
