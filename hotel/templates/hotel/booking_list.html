@@ -5,33 +5,37 @@
 
 <a href="{% url 'booking_add' %}" class="btn btn-success mb-3">Add Booking</a>
 
-<table class="table table-bordered table-striped">
-    <thead class="table-dark">
-        <tr>
-            <th>Customer</th>
-            <th>Room</th>
-            <th>Check-in</th>
-            <th>Check-out</th>
-            <th>Status</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for booking in object_list %}
-        <tr>
-            <td>{{ booking.customer }}</td>
-            <td>{{ booking.room }}</td>
-            <td>{{ booking.check_in }}</td>
-            <td>{{ booking.check_out }}</td>
-            <td>
-                <span class="badge bg-info">{{ booking.status }}</span>
-            </td>
-            <td>
-                <a href="{% url 'booking_edit' booking.id %}" class="btn btn-sm btn-warning">Edit</a>
-                <a href="{% url 'booking_delete' booking.id %}" class="btn btn-sm btn-danger">Delete</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="card shadow-sm">
+    <div class="card-body">
+        <table class="table table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th>Customer</th>
+                    <th>Room</th>
+                    <th>Check-in</th>
+                    <th>Check-out</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for booking in object_list %}
+                <tr>
+                    <td>{{ booking.customer }}</td>
+                    <td>{{ booking.room }}</td>
+                    <td>{{ booking.check_in }}</td>
+                    <td>{{ booking.check_out }}</td>
+                    <td>
+                        <span class="badge bg-info">{{ booking.status }}</span>
+                    </td>
+                    <td>
+                        <a href="{% url 'booking_edit' booking.id %}" class="btn btn-sm btn-warning">Edit</a>
+                        <a href="{% url 'booking_delete' booking.id %}" class="btn btn-sm btn-danger">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 {% endblock %}

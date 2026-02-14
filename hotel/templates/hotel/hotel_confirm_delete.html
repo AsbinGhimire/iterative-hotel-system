@@ -1,0 +1,23 @@
+{% extends 'hotel/base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm border-danger">
+            <div class="card-header bg-danger text-white">
+                <h4 class="mb-0">Delete Hotel</h4>
+            </div>
+            <div class="card-body">
+                <p>Are you sure you want to delete the hotel "<strong>{{ object.name }}</strong>"?</p>
+                <p class="text-danger small">Warning: This will also delete all rooms and bookings associated with this
+                    hotel.</p>
+                <form method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                    <a href="{% url 'hotel_list' %}" class="btn btn-outline-secondary">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

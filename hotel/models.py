@@ -1,6 +1,17 @@
 from django.db import models
 from django.core.exceptions import ValidationError
 from datetime import timedelta
+from django.contrib.auth.models import User
+
+class Hotel(models.Model):
+    name = models.CharField(max_length=200)
+    location = models.CharField(max_length=200)
+    contact_info = models.TextField()
+    total_rooms = models.PositiveIntegerField()
+    manager = models.ForeignKey(User, on_delete=models.CASCADE, related_name='hotels')
+
+    def __str__(self):
+        return self.name
 
 class Room(models.Model):
     ROOM_TYPES = [
@@ -9,14 +20,17 @@ class Room(models.Model):
         ('Deluxe', 'Deluxe'),
     ]
 
-    room_number = models.CharField(max_length=10, unique=True)
+    hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE, related_name='rooms')
+    room_number = models.CharField(max_length=10)
     room_type = models.CharField(max_length=20, choices=ROOM_TYPES)
     price_per_night = models.DecimalField(max_digits=8, decimal_places=2)
     is_available = models.BooleanField(default=True)
 
-    def __str__(self):
-        return f"Room {self.room_number}"
+    class Meta:
+        unique_together = ('hotel', 'room_number')
 
+    def __str__(self):
+        return f"{self.hotel.name} - Room {self.room_number}"
 
 class Customer(models.Model):
     name = models.CharField(max_length=100)
@@ -26,7 +40,6 @@ class Customer(models.Model):
     def __str__(self):
         return self.name
 
-
 class Booking(models.Model):
     STATUS_CHOICES = [
         ('Booked', 'Booked'),
@@ -35,6 +48,7 @@ class Booking(models.Model):
         ('Cancelled', 'Cancelled'),
     ]
 
+    hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE, related_name='bookings')
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
     check_in = models.DateField()

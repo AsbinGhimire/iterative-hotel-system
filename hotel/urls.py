@@ -12,5 +12,8 @@ urlpatterns = [
     path('bookings/add/', views.BookingCreateView.as_view(), name='booking_add'),
     path('bookings/edit/<int:pk>/', views.BookingUpdateView.as_view(), name='booking_edit'),
     path('bookings/delete/<int:pk>/', views.BookingDeleteView.as_view(), name='booking_delete'),
-
+    path('hotels/', views.HotelListView.as_view(), name='hotel_list'),
+    path('hotels/add/', views.HotelCreateView.as_view(), name='hotel_add'),
+    path('hotels/edit/<int:pk>/', views.HotelUpdateView.as_view(), name='hotel_edit'),
+    path('hotels/delete/<int:pk>/', views.HotelDeleteView.as_view(), name='hotel_delete'),
 ]
