@@ -41,22 +41,6 @@ class Booking(models.Model):
     check_out = models.DateField()
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Booked')
 
-class Payment(models.Model):
-    booking = models.OneToOneField(Booking, on_delete=models.CASCADE)
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
-    payment_date = models.DateField(auto_now_add=True)
-    payment_method = models.CharField(max_length=20)
-
-    def save(self, *args, **kwargs):
-        nights = (self.booking.check_out - self.booking.check_in).days
-        self.amount = nights * self.booking.room.price_per_night
-        super().save(*args, **kwargs)
-
-
-    def __str__(self):
-        return f"Payment for {self.booking}"
-
-
     def clean(self):
         if self.check_out <= self.check_in:
             raise ValidationError("Check-out date must be after check-in date.")
@@ -73,15 +57,43 @@ class Payment(models.Model):
     def save(self, *args, **kwargs):
         self.full_clean()
 
+        # Mark room as occupied or available based on status
         if self.status in ['Booked', 'Checked-In']:
             self.room.is_available = False
-        elif self.status == 'Checked-Out':
+        elif self.status in ['Checked-Out', 'Cancelled']:
             self.room.is_available = True
 
         self.room.save()
         super().save(*args, **kwargs)
 
-    
-
     def __str__(self):
         return f"{self.customer} - {self.room}"
+
+class Payment(models.Model):
+    booking = models.OneToOneField(Booking, on_delete=models.CASCADE)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    payment_date = models.DateField(auto_now_add=True)
+    payment_method = models.CharField(max_length=20)
+
+    def save(self, *args, **kwargs):
+        # Calculate amount based on stay duration and price
+        nights = (self.booking.check_out - self.booking.check_in).days
+        if nights < 1: nights = 1 # Minimum 1 night charge
+        self.amount = nights * self.booking.room.price_per_night
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"Payment for {self.booking}"
+
+
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
+
+@receiver(post_delete, sender=Booking)
+def update_room_status_on_delete(sender, instance, **kwargs):
+    """Ensure the room is marked as available when a booking is deleted."""
+    room = instance.room
+    # Check if there are any other active bookings for this room
+    # For simplicity in this system, we mark it available.
+    room.is_available = True
+    room.save()
