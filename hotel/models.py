@@ -56,17 +56,19 @@ class Booking(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Booked')
 
     def clean(self):
-        if self.check_out <= self.check_in:
-            raise ValidationError("Check-out date must be after check-in date.")
+        if self.check_in and self.check_out:
+            if self.check_out <= self.check_in:
+                raise ValidationError("Check-out date must be after check-in date.")
 
-        overlapping = Booking.objects.filter(
-            room=self.room,
-            check_in__lt=self.check_out,
-            check_out__gt=self.check_in
-        ).exclude(id=self.id)
+            if self.room:
+                overlapping = Booking.objects.filter(
+                    room=self.room,
+                    check_in__lt=self.check_out,
+                    check_out__gt=self.check_in
+                ).exclude(id=self.id)
 
-        if overlapping.exists():
-            raise ValidationError("This room is already booked for the selected dates.")
+                if overlapping.exists():
+                    raise ValidationError("This room is already booked for the selected dates.")
 
     def save(self, *args, **kwargs):
         self.full_clean()

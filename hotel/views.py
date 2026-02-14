@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from .models import Room, Hotel, Booking
+from .forms import BookingForm
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 
@@ -101,31 +102,29 @@ class BookingListView(LoginRequiredMixin, ListView):
 
 class BookingCreateView(LoginRequiredMixin, CreateView):
     model = Booking
-    fields = ['customer', 'room', 'check_in', 'check_out', 'status', 'hotel']
+    form_class = BookingForm
     success_url = reverse_lazy('booking_list')
     template_name = 'hotel/booking_form.html'
 
-    def get_form(self, *args, **kwargs):
-        form = super().get_form(*args, **kwargs)
-        form.fields['hotel'].queryset = Hotel.objects.filter(manager=self.request.user)
-        form.fields['room'].queryset = Room.objects.filter(hotel__manager=self.request.user)
-        return form
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
 
 
 class BookingUpdateView(LoginRequiredMixin, UpdateView):
     model = Booking
-    fields = ['customer', 'room', 'check_in', 'check_out', 'status', 'hotel']
+    form_class = BookingForm
     success_url = reverse_lazy('booking_list')
     template_name = 'hotel/booking_form.html'
 
     def get_queryset(self):
         return Booking.objects.filter(hotel__manager=self.request.user)
 
-    def get_form(self, *args, **kwargs):
-        form = super().get_form(*args, **kwargs)
-        form.fields['hotel'].queryset = Hotel.objects.filter(manager=self.request.user)
-        form.fields['room'].queryset = Room.objects.filter(hotel__manager=self.request.user)
-        return form
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
 
 
 class BookingDeleteView(LoginRequiredMixin, DeleteView):

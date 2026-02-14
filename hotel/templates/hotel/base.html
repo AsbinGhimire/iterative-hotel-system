@@ -17,6 +17,7 @@
 
             <div class="collapse navbar-collapse">
                 <ul class="navbar-nav ms-auto">
+                    {% if user.is_authenticated %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'hotel_list' %}">Hotels</a>
                     </li>
@@ -26,6 +27,7 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'booking_list' %}">Bookings</a>
                     </li>
+                    {% endif %}
                     {% if user.is_authenticated %}
                     <li class="nav-item">
                         <form action="{% url 'logout' %}" method="post" class="d-inline">
