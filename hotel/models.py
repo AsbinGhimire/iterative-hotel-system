@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.exceptions import ValidationError
 from datetime import timedelta
+from django.utils import timezone
 from django.contrib.auth.models import User
 
 class Hotel(models.Model):
@@ -30,6 +31,14 @@ class Room(models.Model):
     class Meta:
         unique_together = ('hotel', 'room_number')
 
+    def clean(self):
+        if self.price_per_night is not None and self.price_per_night <= 0:
+            raise ValidationError({'price_per_night': "Price per night must be greater than zero."})
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f"{self.hotel.name} - Room {self.room_number}"
 
@@ -58,8 +67,11 @@ class Booking(models.Model):
 
     def clean(self):
         if self.check_in and self.check_out:
+            if self.check_in < timezone.now().date() and self._state.adding:
+                raise ValidationError({'check_in': "Check-in date cannot be in the past."})
+
             if self.check_out <= self.check_in:
-                raise ValidationError("Check-out date must be after check-in date.")
+                raise ValidationError({'check_out': "Check-out date must be after check-in date."})
 
             if self.room:
                 overlapping = Booking.objects.filter(
