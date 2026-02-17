@@ -9,7 +9,7 @@
                 <h4 class="mb-0">{% if object %}Edit Hotel{% else %}Add Hotel{% endif %}</h4>
             </div>
             <div class="card-body">
-                <form method="post">
+                <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     {{ form|crispy }}
                     <div class="mt-4">
