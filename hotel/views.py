@@ -25,6 +25,9 @@ def home(request):
         context = {}
     return render(request, 'hotel/home.html', context)
 
+def about(request):
+    return render(request, 'hotel/about.html')
+
 # Hotel CRUD Views
 class HotelListView(LoginRequiredMixin, ListView):
     model = Hotel
@@ -149,3 +152,10 @@ class BookingDeleteView(LoginRequiredMixin, DeleteView):
 
     def get_queryset(self):
         return Booking.objects.filter(hotel__manager=self.request.user)
+
+def update_booking_status(request, pk, status):
+    booking = Booking.objects.get(pk=pk, hotel__manager=request.user)
+    if status in ['Booked', 'Checked-In', 'Checked-Out', 'Cancelled']:
+        booking.status = status
+        booking.save()
+    return redirect('booking_list')

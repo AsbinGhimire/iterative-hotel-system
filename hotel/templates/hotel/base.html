@@ -114,6 +114,51 @@
     .social-icon:hover {
         color: var(--primary-color);
     }
+
+    /* Responsiveness Refinements */
+    @media (max-width: 991.98px) {
+        .navbar-premium {
+            padding: 0.5rem 0;
+        }
+
+        .navbar-nav {
+            padding: 1rem 0;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            margin-top: 0.5rem;
+        }
+
+        .nav-link {
+            padding: 0.75rem 1.5rem !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .nav-item:last-child .nav-link {
+            border-bottom: none;
+        }
+
+        .hero-section {
+            padding: 3rem 1.5rem;
+        }
+
+        .display-4 {
+            font-size: 2.5rem;
+        }
+    }
+
+    @media (max-width: 575.98px) {
+        .stat-card .display-5 {
+            font-size: 2rem;
+        }
+
+        .hero-section h1 {
+            font-size: 2rem;
+        }
+
+        .footer-heading {
+            margin-top: 1rem;
+        }
+    }
 </style>
 
 <body class="bg-light">
@@ -141,6 +186,11 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'booking_list' %}">Bookings</a>
                     </li>
+                    {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'about' %}">About</a>
+                    </li>
+                    {% if user.is_authenticated %}
                     <li class="nav-item ms-lg-3">
                         <form action="{% url 'logout' %}" method="post" class="d-inline">
                             {% csrf_token %}
@@ -182,6 +232,7 @@
                 <div class="col-lg-2">
                     <h6 class="footer-heading">Product</h6>
                     <ul class="list-unstyled">
+                        <li class="mb-2"><a href="{% url 'about' %}" class="footer-link">About</a></li>
                         <li class="mb-2"><a href="{% url 'hotel_list' %}" class="footer-link">Hotels</a></li>
                         <li class="mb-2"><a href="{% url 'room_list' %}" class="footer-link">Rooms</a></li>
                         <li class="mb-2"><a href="{% url 'booking_list' %}" class="footer-link">Bookings</a></li>

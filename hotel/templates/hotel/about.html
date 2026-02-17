@@ -1,0 +1,145 @@
+{% extends 'hotel/base.html' %}
+
+{% block content %}
+<style>
+    .about-hero {
+        background: linear-gradient(135deg, #1a1c23 0%, #3b82f6 100%);
+        color: white;
+        padding: 5rem 2rem;
+        border-radius: 24px;
+        margin-bottom: 4rem;
+        text-align: center;
+    }
+
+    .feature-icon-box {
+        width: 64px;
+        height: 64px;
+        background: rgba(59, 130, 246, 0.1);
+        color: #3b82f6;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1.5rem;
+        font-size: 1.5rem;
+    }
+
+    .about-card {
+        border: none;
+        border-radius: 20px;
+        transition: all 0.3s ease;
+    }
+
+    .about-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05) !important;
+    }
+
+    .creator-section {
+        background: white;
+        border-radius: 24px;
+        padding: 3rem;
+        margin-top: 4rem;
+    }
+</style>
+
+<div class="about-hero shadow-lg">
+    <h1 class="display-3 fw-bold mb-3">About Hotel IMS</h1>
+    <p class="lead opacity-75 mx-auto px-3" style="max-width: 700px;">
+        Simplifying hospitality management through innovative technology and intuitive design.
+    </p>
+</div>
+
+<div class="row g-5 align-items-center mb-5 px-3 px-sm-0">
+    <div class="col-lg-6 text-center text-lg-start">
+        <h2 class="fw-bold mb-4">Our Mission</h2>
+        <p class="text-muted lead">
+            The Hotel Information Management System (IMS) was built with a single goal: to empower hotel owners and
+            managers with the tools they need to thrive in a digital-first world.
+        </p>
+        <p class="text-muted">
+            We believe that managing a hospitality business should be as seamless as the guest experience itself. Our
+            platform provides a centralized hub for tracking inventory, managing bookings, and analyzing performance,
+            all in one premium interface.
+        </p>
+        <div class="d-flex gap-3 mt-4">
+            <div class="p-3 bg-white rounded-4 shadow-sm text-center flex-fill">
+                <div class="h3 fw-bold text-primary mb-0">100%</div>
+                <small class="text-muted">Secure</small>
+            </div>
+            <div class="p-3 bg-white rounded-4 shadow-sm text-center flex-fill">
+                <div class="h3 fw-bold text-success mb-0">24/7</div>
+                <small class="text-muted">Accessible</small>
+            </div>
+            <div class="p-3 bg-white rounded-4 shadow-sm text-center flex-fill">
+                <div class="h3 fw-bold text-info mb-0">HD</div>
+                <small class="text-muted">Visuals</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="card about-card h-100 p-4 bg-white shadow-sm">
+                    <div class="feature-icon-box">
+                        <i class="bi bi-box-seam"></i>
+                    </div>
+                    <h5 class="fw-bold">Inventory Control</h5>
+                    <p class="small text-muted mb-0">Deep management of room types, amenities, and availability status.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card about-card h-100 p-4 bg-white shadow-sm">
+                    <div class="feature-icon-box">
+                        <i class="bi bi-people"></i>
+                    </div>
+                    <h5 class="fw-bold">Guest Centric</h5>
+                    <p class="small text-muted mb-0">Streamlined booking processes designed for speed and guest
+                        satisfaction.</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card about-card h-100 p-4 bg-white shadow-sm">
+                    <div class="feature-icon-box">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+                    <h5 class="fw-bold">Role-Based Access</h5>
+                    <p class="small text-muted mb-0">Granular permissions ensuring each staff member has the right level
+                        of access.</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card about-card h-100 p-4 bg-white shadow-sm">
+                    <div class="feature-icon-box">
+                        <i class="bi bi-palette"></i>
+                    </div>
+                    <h5 class="fw-bold">Modern Design</h5>
+                    <p class="small text-muted mb-0">A premium interface that makes management tasks a visual pleasure.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="creator-section shadow-sm text-center">
+    <div class="mb-4">
+        <div class="bg-primary d-inline-block p-4 rounded-circle mb-3">
+            <i class="bi bi-code-slash text-white h1 mb-0"></i>
+        </div>
+        <h3 class="fw-bold">The Visionary Behind</h3>
+        <p class="text-muted">Developed with passion for the hospitality industry.</p>
+    </div>
+    <div class="mx-auto" style="max-width: 600px;">
+        <p class="mb-4">
+            Hotel IMS is an iterative project focused on combining robust backend engineering with world-class frontend
+            aesthetics. It stands as a testament to modern software development standards.
+        </p>
+        <div class="d-flex justify-content-center gap-3">
+            <a href="#" class="btn btn-dark rounded-pill px-4">Github Portfolio</a>
+            <a href="#" class="btn btn-outline-primary rounded-pill px-4">Contact Developer</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,41 +1,100 @@
 {% extends 'hotel/base.html' %}
 
 {% block content %}
-<h2 class="mb-3">Bookings</h2>
+<div class="d-flex flex-column flex-sm-row justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold mb-3 mb-sm-0">Active Bookings</h2>
+    <a href="{% url 'booking_add' %}" class="btn btn-primary px-4 py-2 rounded-pill shadow-sm">
+        <i class="bi bi-calendar-plus me-2"></i>New Booking
+    </a>
+</div>
 
-<a href="{% url 'booking_add' %}" class="btn btn-success mb-3">Add Booking</a>
+<div class="card border-0 shadow-sm rounded-4">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4 py-3">Customer</th>
+                        <th class="py-3">Room</th>
+                        <th class="py-3">Check-in</th>
+                        <th class="py-3">Check-out</th>
+                        <th class="py-3 text-center">Status</th>
+                        <th class="py-3 text-end pe-4">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booking in object_list %}
+                    <tr>
+                        <td class="ps-4 fw-bold">{{ booking.customer }}</td>
+                        <td class="text-primary">{{ booking.room }}</td>
+                        <td class="small">{{ booking.check_in|date:"M d, Y" }}</td>
+                        <td class="small">{{ booking.check_out|date:"M d, Y" }}</td>
+                        <td class="text-center">
+                            {% if booking.status == 'Booked' %}
+                            <span
+                                class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 rounded-pill px-3">Booked</span>
+                            {% elif booking.status == 'Checked-In' %}
+                            <span
+                                class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-3">In
+                                Progress</span>
+                            {% elif booking.status == 'Checked-Out' %}
+                            <span
+                                class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25 rounded-pill px-3">Completed</span>
+                            {% elif booking.status == 'Cancelled' %}
+                            <span
+                                class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 rounded-pill px-3">Cancelled</span>
+                            {% else %}
+                            <span
+                                class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-25 rounded-pill px-3">{{
+                                booking.get_status_display }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end pe-4">
+                            <div class="d-flex justify-content-end gap-2">
+                                {% if booking.status == 'Booked' %}
+                                <a href="{% url 'update_booking_status' booking.id 'Checked-In' %}"
+                                    class="btn btn-sm btn-success rounded-pill px-3" title="Check In Guest">
+                                    <i class="bi bi-box-arrow-in-right me-1"></i>Check In
+                                </a>
+                                <a href="{% url 'update_booking_status' booking.id 'Cancelled' %}"
+                                    class="btn btn-sm btn-outline-warning rounded-pill px-3" title="Cancel Booking">
+                                    <i class="bi bi-x-circle me-1"></i>Cancel
+                                </a>
+                                {% elif booking.status == 'Checked-In' %}
+                                <a href="{% url 'update_booking_status' booking.id 'Checked-Out' %}"
+                                    class="btn btn-sm btn-info rounded-pill px-3 text-white" title="Check Out Guest">
+                                    <i class="bi bi-box-arrow-right me-1"></i>Check Out
+                                </a>
+                                {% endif %}
 
-<div class="card shadow-sm">
-    <div class="card-body">
-        <table class="table table-hover">
-            <thead class="table-light">
-                <tr>
-                    <th>Customer</th>
-                    <th>Room</th>
-                    <th>Check-in</th>
-                    <th>Check-out</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for booking in object_list %}
-                <tr>
-                    <td>{{ booking.customer }}</td>
-                    <td>{{ booking.room }}</td>
-                    <td>{{ booking.check_in }}</td>
-                    <td>{{ booking.check_out }}</td>
-                    <td>
-                        <span class="badge bg-info">{{ booking.status }}</span>
-                    </td>
-                    <td>
-                        <a href="{% url 'booking_edit' booking.id %}" class="btn btn-sm btn-warning">Edit</a>
-                        <a href="{% url 'booking_delete' booking.id %}" class="btn btn-sm btn-danger">Delete</a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                                <a href="{% url 'booking_edit' booking.id %}"
+                                    class="btn btn-sm btn-light rounded-pill px-3 border border-light-subtle"
+                                    title="Edit Booking">
+                                    <i class="bi bi-pencil-square"></i>
+                                </a>
+
+                                {% if booking.status == 'Cancelled' %}
+                                <a href="{% url 'booking_delete' booking.id %}"
+                                    class="btn btn-sm btn-outline-danger rounded-pill px-3" title="Delete Record">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center py-5">
+                            <div class="text-muted">
+                                <i class="bi bi-calendar-x display-4 mb-3 d-block"></i>
+                                <p>No active bookings. Start by registering a guest!</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 {% endblock %}
