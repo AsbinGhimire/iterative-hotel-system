@@ -8,7 +8,22 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 def home(request):
-    return render(request, 'hotel/home.html')
+    if request.user.is_authenticated:
+        hotels = Hotel.objects.filter(manager=request.user)
+        hotel_count = hotels.count()
+        room_count = Room.objects.filter(hotel__manager=request.user).count()
+        booking_count = Booking.objects.filter(hotel__manager=request.user).count()
+        latest_hotels = hotels.order_by('-id')[:3]
+        
+        context = {
+            'hotel_count': hotel_count,
+            'room_count': room_count,
+            'booking_count': booking_count,
+            'latest_hotels': latest_hotels,
+        }
+    else:
+        context = {}
+    return render(request, 'hotel/home.html', context)
 
 # Hotel CRUD Views
 class HotelListView(LoginRequiredMixin, ListView):

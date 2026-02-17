@@ -11,14 +11,126 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 </head>
 
+<style>
+    :root {
+        --primary-color: #3b82f6;
+        /* Modern Blue */
+        --secondary-color: #64748b;
+        --dark-bg: #1a1c23;
+        /* Deep Slate */
+        --nav-footer-bg: #1a1c23;
+        --text-light: #f8fafc;
+        --text-muted: #94a3b8;
+    }
+
+    body {
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        background-color: #f1f5f9;
+        color: #1e293b;
+    }
+
+    .navbar-premium {
+        background: var(--nav-footer-bg);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        transition: all 0.3s ease;
+        padding: 0.75rem 0;
+    }
+
+    .navbar-brand {
+        font-weight: 800;
+        letter-spacing: -0.5px;
+        color: white !important;
+        font-size: 1.5rem;
+    }
+
+    .nav-link {
+        font-weight: 500;
+        color: var(--text-light) !important;
+        transition: all 0.2s ease;
+        padding: 0.5rem 1rem !important;
+        opacity: 0.8;
+    }
+
+    .nav-link:hover {
+        color: white !important;
+        opacity: 1;
+        transform: translateY(-1px);
+    }
+
+    .main-content {
+        flex: 1;
+    }
+
+    footer {
+        background-color: var(--nav-footer-bg);
+        color: var(--text-light);
+        padding: 2.5rem 0 1.5rem;
+        /* Reduced padding */
+        margin-top: 4rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .footer-heading {
+        color: white;
+        font-weight: 700;
+        margin-bottom: 1.25rem;
+        font-size: 1.1rem;
+    }
+
+    .footer-link {
+        color: var(--text-muted);
+        text-decoration: none;
+        transition: color 0.2s ease;
+        font-size: 0.95rem;
+    }
+
+    .footer-link:hover {
+        color: white;
+    }
+
+    footer .text-muted {
+        color: var(--text-muted) !important;
+    }
+
+    footer p,
+    footer li {
+        color: var(--text-muted);
+    }
+
+    footer i {
+        color: var(--text-light);
+    }
+
+    .social-icon {
+        font-size: 1.25rem;
+        margin-right: 1rem;
+        color: #a0aec0;
+        transition: color 0.2s ease;
+    }
+
+    .social-icon:hover {
+        color: var(--primary-color);
+    }
+</style>
+
 <body class="bg-light">
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <nav class="navbar navbar-expand-lg sticky-top navbar-premium py-2">
         <div class="container">
-            <a class="navbar-brand" href="{% url 'home' %}">Hotel IMS</a>
+            <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}">
+                <i class="bi bi-building-fill-check me-2 text-primary"></i>Hotel IMS
+            </a>
 
-            <div class="collapse navbar-collapse">
-                <ul class="navbar-nav ms-auto">
+            <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarNav">
+                <i class="bi bi-list text-white h2 mb-0"></i>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
                     {% if user.is_authenticated %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'hotel_list' %}">Hotels</a>
@@ -29,14 +141,16 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'booking_list' %}">Bookings</a>
                     </li>
-                    {% endif %}
-                    {% if user.is_authenticated %}
-                    <li class="nav-item">
+                    <li class="nav-item ms-lg-3">
                         <form action="{% url 'logout' %}" method="post" class="d-inline">
                             {% csrf_token %}
                             <button type="submit"
-                                class="nav-link btn btn-link text-white text-decoration-none">Logout</button>
+                                class="btn btn-primary rounded-pill px-4 btn-sm fw-bold">Logout</button>
                         </form>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="btn btn-primary rounded-pill px-4 fw-bold" href="{% url 'login' %}">Login</a>
                     </li>
                     {% endif %}
                 </ul>
@@ -44,10 +158,64 @@
         </div>
     </nav>
 
-    <div class="container mt-4">
+    <div class="container mt-4 main-content">
         {% block content %}{% endblock %}
     </div>
 
+    <footer>
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <h5 class="navbar-brand d-flex align-items-center text-white mb-3">
+                        <i class="bi bi-building-fill-check me-2 text-primary"></i>Hotel IMS
+                    </h5>
+                    <p class="text-muted small pe-lg-5">Empowering hotel owners with state-of-the-art management tools
+                        for a
+                        seamless hospitality experience.</p>
+                    <div class="d-flex mt-3">
+                        <a href="#" class="social-icon"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="social-icon"><i class="bi bi-twitter-x"></i></a>
+                        <a href="#" class="social-icon"><i class="bi bi-linkedin"></i></a>
+                        <a href="#" class="social-icon"><i class="bi bi-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2">
+                    <h6 class="footer-heading">Product</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="{% url 'hotel_list' %}" class="footer-link">Hotels</a></li>
+                        <li class="mb-2"><a href="{% url 'room_list' %}" class="footer-link">Rooms</a></li>
+                        <li class="mb-2"><a href="{% url 'booking_list' %}" class="footer-link">Bookings</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3">
+                    <h6 class="footer-heading">Support</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#" class="footer-link">Help Center</a></li>
+                        <li class="mb-2"><a href="#" class="footer-link">Privacy Policy</a></li>
+                        <li class="mb-2"><a href="#" class="footer-link">Terms of Service</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3">
+                    <h6 class="footer-heading">Contact Us</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2 text-muted"><i class="bi bi-geo-alt me-2"></i>123 Hospitality Lane, Suite 100
+                        </li>
+                        <li class="mb-2 text-muted"><i class="bi bi-envelope me-2"></i>support@hotelims.com</li>
+                        <li class="mb-2 text-muted"><i class="bi bi-telephone me-2"></i>+1 (555) 000-HOTEL</li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="mt-5 border-secondary opacity-25">
+            <div class="row pt-4">
+                <div class="col-md-6 text-center text-md-start">
+                    <p class="small text-muted mb-0">&copy; 2026 Hotel IMS by Nirmit. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>
