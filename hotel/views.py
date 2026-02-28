@@ -38,7 +38,7 @@ class HotelListView(LoginRequiredMixin, ListView):
 
 class HotelCreateView(LoginRequiredMixin, CreateView):
     model = Hotel
-    fields = ['name', 'location', 'contact_info', 'total_rooms', 'image']
+    fields = ['name', 'location', 'contact_info', 'total_rooms', 'star_rating', 'image']
     success_url = reverse_lazy('hotel_list')
     template_name = 'hotel/hotel_form.html'
 
@@ -48,7 +48,7 @@ class HotelCreateView(LoginRequiredMixin, CreateView):
 
 class HotelUpdateView(LoginRequiredMixin, UpdateView):
     model = Hotel
-    fields = ['name', 'location', 'contact_info', 'total_rooms', 'image']
+    fields = ['name', 'location', 'contact_info', 'total_rooms', 'star_rating', 'image']
     success_url = reverse_lazy('hotel_list')
     template_name = 'hotel/hotel_form.html'
 

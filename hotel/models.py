@@ -5,10 +5,19 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 
 class Hotel(models.Model):
+    STAR_RATING_CHOICES = [
+        (1, '1 Star'),
+        (2, '2 Stars'),
+        (3, '3 Stars'),
+        (4, '4 Stars'),
+        (5, '5 Stars'),
+    ]
+
     name = models.CharField(max_length=200)
     location = models.CharField(max_length=200)
     contact_info = models.CharField(max_length=15)
     total_rooms = models.PositiveIntegerField()
+    star_rating = models.IntegerField(choices=STAR_RATING_CHOICES, default=3)
     manager = models.ForeignKey(User, on_delete=models.CASCADE, related_name='hotels')
     image = models.ImageField(upload_to='hotels/', null=True, blank=True)
 

@@ -109,6 +109,14 @@
                         {% endif %}
                         <div class="flex-grow-1">
                             <h6 class="mb-0 fw-bold">{{ hotel.name }}</h6>
+                            <div class="text-warning small mb-1">
+                                {% for i in "12345"|make_list %}
+                                {% if forloop.counter <= hotel.star_rating %} <i class="bi bi-star-fill"></i>
+                                    {% else %}
+                                    <i class="bi bi-star text-muted opacity-50"></i>
+                                    {% endif %}
+                                    {% endfor %}
+                            </div>
                             <small class="text-muted"><i class="bi bi-geo-alt me-1"></i>{{ hotel.location }}</small>
                         </div>
                         <div class="text-end">
