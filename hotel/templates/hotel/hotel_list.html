@@ -41,8 +41,8 @@
 <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center mb-4">
     <h2 class="fw-bold mb-3 mb-sm-0">{% if user.is_staff %}Managed Hotels{% else %}All Hotels{% endif %}</h2>
     {% if user.is_staff %}
-    <a href="{% url 'hotel_add' %}" class="btn btn-primary px-4 py-2 rounded-pill shadow-sm">
-        <i class="bi bi-plus-lg me-2"></i>Add New Hotel
+    <a href="{% url 'hotel_add' %}" class="btn btn-primary px-4 py-2 rounded-pill shadow-sm d-flex align-items-center">
+        <i data-lucide="plus" class="me-2" style="width: 18px;"></i>Add New Hotel
     </a>
     {% endif %}
 </div>
@@ -54,8 +54,9 @@
             {% if hotel.image %}
             <img src="{{ hotel.image.url }}" class="card-img-top" alt="{{ hotel.name }}">
             {% else %}
-            <div class="card-img-top bg-light d-flex align-items-center justify-content-center border-bottom">
-                <i class="bi bi-building text-muted display-1"></i>
+            <div class="card-img-top bg-light d-flex align-items-center justify-content-center border-bottom"
+                style="height: 200px;">
+                <i data-lucide="building-2" class="text-muted opacity-25" style="width: 64px; height: 64px;"></i>
             </div>
             {% endif %}
 
@@ -63,35 +64,40 @@
                 <h4 class="card-title mb-2">{{ hotel.name }}</h4>
                 <div class="mb-2 text-warning" style="font-size: 0.9rem;">
                     {% for i in "12345"|make_list %}
-                    {% if forloop.counter <= hotel.star_rating %} <i class="bi bi-star-fill"></i>
+                    {% if forloop.counter <= hotel.star_rating %} <i data-lucide="star"
+                        class="text-warning fill-warning" style="width: 14px; fill: currentColor;"></i>
                         {% else %}
-                        <i class="bi bi-star text-muted opacity-50"></i>
+                        <i data-lucide="star" class="text-muted opacity-50" style="width: 14px;"></i>
                         {% endif %}
                         {% endfor %}
                 </div>
-                <p class="text-muted mb-3"><i class="bi bi-geo-alt-fill me-2"></i>{{ hotel.location }}</p>
+                <p class="text-muted mb-3 d-flex align-items-center">
+                    <i data-lucide="map-pin" class="me-2 text-primary" style="width: 16px;"></i>{{ hotel.location }}
+                </p>
 
                 <div class="mt-auto">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <span class="stat-badge">
-                            <i class="bi bi-door-open me-2"></i>{{ hotel.total_rooms }} Rooms
+                        <span class="stat-badge d-flex align-items-center">
+                            <i data-lucide="bed" class="me-2" style="width: 16px;"></i>{{ hotel.total_rooms }} Rooms
                         </span>
-                        <span class="text-primary fw-bold small">
-                            <i class="bi bi-telephone me-1"></i>{{ hotel.contact_info }}
+                        <span class="text-primary fw-bold small d-flex align-items-center">
+                            <i data-lucide="phone" class="me-1" style="width: 14px;"></i>{{ hotel.contact_info }}
                         </span>
                     </div>
 
                     <div class="d-flex gap-2">
                         <a href="{% url 'room_list' %}?hotel={{ hotel.id }}"
-                            class="btn btn-outline-primary w-100 rounded-pill">
-                            <i class="bi bi-door-open me-2"></i>View Rooms
+                            class="btn btn-outline-primary w-100 rounded-pill d-flex align-items-center justify-content-center">
+                            <i data-lucide="eye" class="me-2" style="width: 16px;"></i>View Rooms
                         </a>
                         {% if user.is_staff %}
-                        <a href="{% url 'hotel_edit' hotel.pk %}" class="btn btn-outline-secondary w-100 rounded-pill">
-                            <i class="bi bi-pencil-square me-2"></i>Edit
+                        <a href="{% url 'hotel_edit' hotel.pk %}"
+                            class="btn btn-outline-secondary w-100 rounded-pill d-flex align-items-center justify-content-center">
+                            <i data-lucide="edit-3" class="me-2" style="width: 16px;"></i>Edit
                         </a>
-                        <a href="{% url 'hotel_delete' hotel.pk %}" class="btn btn-outline-danger w-100 rounded-pill">
-                            <i class="bi bi-trash me-2"></i>Delete
+                        <a href="{% url 'hotel_delete' hotel.pk %}"
+                            class="btn btn-outline-danger w-100 rounded-pill d-flex align-items-center justify-content-center">
+                            <i data-lucide="trash-2" class="me-2" style="width: 16px;"></i>Delete
                         </a>
                         {% endif %}
                     </div>
@@ -101,8 +107,9 @@
     </div>
     {% empty %}
     <div class="col-12 text-center py-5">
-        <div class="card border-0 bg-light py-5">
-            <i class="bi bi-buildings text-muted display-1 mb-3"></i>
+        <div class="card border-0 bg-light py-5 rounded-4">
+            <i data-lucide="building-2" class="text-muted mx-auto mb-3"
+                style="width: 64px; height: 64px; opacity: 0.2;"></i>
             <h3 class="text-muted">No hotels registered yet.</h3>
             <p class="text-muted small">Start by adding your first hotel property.</p>
         </div>

@@ -47,12 +47,14 @@
     {% else %}
     <div class="d-flex flex-column flex-sm-row justify-content-center gap-3 px-4">
         {% if user.is_staff %}
-        <a href="{% url 'hotel_add' %}" class="btn btn-light btn-lg px-4 rounded-pill fw-bold">
-            <i class="bi bi-plus-lg me-2"></i>Add Hotel
+        <a href="{% url 'hotel_add' %}"
+            class="btn btn-light btn-lg px-4 rounded-pill fw-bold d-flex align-items-center justify-content-center">
+            <i data-lucide="plus" class="me-2" style="width: 20px;"></i>Add Hotel
         </a>
         {% endif %}
-        <a href="{% url 'booking_add' %}" class="btn btn-outline-light btn-lg px-4 rounded-pill fw-bold">
-            <i class="bi bi-calendar-check me-2"></i>New Booking
+        <a href="{% url 'booking_add' %}"
+            class="btn btn-outline-light btn-lg px-4 rounded-pill fw-bold d-flex align-items-center justify-content-center">
+            <i data-lucide="calendar-plus" class="me-2" style="width: 20px;"></i>New Booking
         </a>
     </div>
     {% endif %}
@@ -64,9 +66,10 @@
         <div class="card stat-card shadow-sm h-100 bg-white">
             <div class="card-body text-center p-4">
                 <div class="display-5 fw-bold text-primary mb-1">{{ hotel_count }}</div>
-                <div class="text-muted text-uppercase small fw-bold">Total Hotels</div>
-                <i class="bi bi-building text-primary opacity-25"
-                    style="font-size: 3rem; position: absolute; right: 1rem; bottom: 0.5rem;"></i>
+                <div class="text-muted text-uppercase small fw-bold mb-3">Total Hotels</div>
+                <div class="icon-box icon-box-lg mx-auto bg-primary bg-opacity-10 text-primary">
+                    <i data-lucide="building-2" class="premium-icon"></i>
+                </div>
             </div>
         </div>
     </div>
@@ -74,9 +77,10 @@
         <div class="card stat-card shadow-sm h-100 bg-white">
             <div class="card-body text-center p-4">
                 <div class="display-5 fw-bold text-success mb-1">{{ room_count }}</div>
-                <div class="text-muted text-uppercase small fw-bold">Managed Rooms</div>
-                <i class="bi bi-door-closed text-success opacity-25"
-                    style="font-size: 3rem; position: absolute; right: 1rem; bottom: 0.5rem;"></i>
+                <div class="text-muted text-uppercase small fw-bold mb-3">Managed Rooms</div>
+                <div class="icon-box icon-box-lg mx-auto bg-success bg-opacity-10 text-success">
+                    <i data-lucide="bed" class="premium-icon"></i>
+                </div>
             </div>
         </div>
     </div>
@@ -84,9 +88,10 @@
         <div class="card stat-card shadow-sm h-100 bg-white">
             <div class="card-body text-center p-4">
                 <div class="display-5 fw-bold text-warning mb-1">{{ booking_count }}</div>
-                <div class="text-muted text-uppercase small fw-bold">Active Bookings</div>
-                <i class="bi bi-calendar-event text-warning opacity-25"
-                    style="font-size: 3rem; position: absolute; right: 1rem; bottom: 0.5rem;"></i>
+                <div class="text-muted text-uppercase small fw-bold mb-3">Active Bookings</div>
+                <div class="icon-box icon-box-lg mx-auto bg-warning bg-opacity-10 text-warning">
+                    <i data-lucide="calendar-check" class="premium-icon"></i>
+                </div>
             </div>
         </div>
     </div>
@@ -106,20 +111,23 @@
                         <img src="{{ hotel.image.url }}" class="hotel-thumb me-3" alt="{{ hotel.name }}">
                         {% else %}
                         <div class="hotel-thumb me-3 bg-light d-flex align-items-center justify-content-center">
-                            <i class="bi bi-building text-muted"></i>
+                            <i data-lucide="building" class="text-muted" style="width: 24px;"></i>
                         </div>
                         {% endif %}
                         <div class="flex-grow-1">
                             <h6 class="mb-0 fw-bold">{{ hotel.name }}</h6>
                             <div class="text-warning small mb-1">
                                 {% for i in "12345"|make_list %}
-                                {% if forloop.counter <= hotel.star_rating %} <i class="bi bi-star-fill"></i>
+                                {% if forloop.counter <= hotel.star_rating %} <i data-lucide="star"
+                                    class="text-warning fill-warning" style="width: 14px; fill: currentColor;"></i>
                                     {% else %}
-                                    <i class="bi bi-star text-muted opacity-50"></i>
+                                    <i data-lucide="star" class="text-muted opacity-50" style="width: 14px;"></i>
                                     {% endif %}
                                     {% endfor %}
                             </div>
-                            <small class="text-muted"><i class="bi bi-geo-alt me-1"></i>{{ hotel.location }}</small>
+                            <small class="text-muted d-flex align-items-center">
+                                <i data-lucide="map-pin" class="me-1" style="width: 14px;"></i>{{ hotel.location }}
+                            </small>
                         </div>
                         <div class="text-end">
                             <span class="badge bg-primary rounded-pill">{{ hotel.total_rooms }} Rooms</span>
@@ -149,10 +157,10 @@
             <div class="card-body d-flex flex-column gap-3">
                 {% if user.is_staff %}
                 <a href="{% url 'room_add' %}"
-                    class="card quick-action-card text-decoration-none p-3 shadow-none border border-light">
+                    class="card quick-action-card text-decoration-none p-3 shadow-none border border-light hover-lift">
                     <div class="d-flex align-items-center">
-                        <div class="bg-primary bg-opacity-10 p-3 rounded-3 me-3 text-primary">
-                            <i class="bi bi-plus-circle h4 mb-0"></i>
+                        <div class="icon-box bg-primary bg-opacity-10 me-3">
+                            <i data-lucide="plus-circle" class="premium-icon"></i>
                         </div>
                         <div>
                             <div class="fw-bold text-dark">Add New Room</div>
@@ -162,10 +170,10 @@
                 </a>
                 {% endif %}
                 <a href="{% url 'booking_add' %}"
-                    class="card quick-action-card text-decoration-none p-3 shadow-none border border-light">
+                    class="card quick-action-card text-decoration-none p-3 shadow-none border border-light hover-lift">
                     <div class="d-flex align-items-center">
-                        <div class="bg-success bg-opacity-10 p-3 rounded-3 me-3 text-success">
-                            <i class="bi bi-journal-plus h4 mb-0"></i>
+                        <div class="icon-box bg-success bg-opacity-10 me-3">
+                            <i data-lucide="book-plus" class="premium-icon"></i>
                         </div>
                         <div>
                             <div class="fw-bold text-dark">Create Booking</div>
@@ -187,18 +195,18 @@
         </div>
         <div class="row g-4">
             <div class="col-md-4 text-center">
-                <div class="p-4 rounded-4 bg-white shadow-sm h-100 transition-up">
-                    <div class="bg-primary bg-opacity-10 p-4 rounded-circle d-inline-block mb-4 text-primary">
-                        <i class="bi bi-lightning-charge-fill h1 mb-0"></i>
+                <div class="p-4 rounded-4 bg-white shadow-sm h-100 hover-lift">
+                    <div class="icon-box icon-box-lg bg-primary bg-opacity-10 mb-4">
+                        <i data-lucide="zap" class="premium-icon" style="width: 32px; height: 32px;"></i>
                     </div>
                     <h5 class="fw-bold">Fast & Efficient</h5>
                     <p class="text-muted">Manage your bookings and inventory with lightning speed and zero friction.</p>
                 </div>
             </div>
             <div class="col-md-4 text-center">
-                <div class="p-4 rounded-4 bg-white shadow-sm h-100 transition-up">
-                    <div class="bg-success bg-opacity-10 p-4 rounded-circle d-inline-block mb-4 text-success">
-                        <i class="bi bi-shield-lock-fill h1 mb-0"></i>
+                <div class="p-4 rounded-4 bg-white shadow-sm h-100 hover-lift">
+                    <div class="icon-box icon-box-lg bg-success bg-opacity-10 mb-4">
+                        <i data-lucide="shield-check" class="premium-icon" style="width: 32px; height: 32px;"></i>
                     </div>
                     <h5 class="fw-bold">Secure Management</h5>
                     <p class="text-muted">Your data is always safe with our robust security architecture and role-based
@@ -206,9 +214,9 @@
                 </div>
             </div>
             <div class="col-md-4 text-center">
-                <div class="p-4 rounded-4 bg-white shadow-sm h-100 transition-up">
-                    <div class="bg-info bg-opacity-10 p-4 rounded-circle d-inline-block mb-4 text-info">
-                        <i class="bi bi-graph-up-arrow h1 mb-0"></i>
+                <div class="p-4 rounded-4 bg-white shadow-sm h-100 hover-lift">
+                    <div class="icon-box icon-box-lg bg-info bg-opacity-10 mb-4">
+                        <i data-lucide="trending-up" class="premium-icon" style="width: 32px; height: 32px;"></i>
                     </div>
                     <h5 class="fw-bold">Insightful Statistics</h5>
                     <p class="text-muted">Real-time overview of your business performance at a single glance.</p>

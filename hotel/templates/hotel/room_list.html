@@ -4,8 +4,8 @@
 <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center mb-4">
     <h2 class="fw-bold mb-3 mb-sm-0">{% if user.is_staff %}Managed Rooms{% else %}Available Rooms{% endif %}</h2>
     {% if user.is_staff %}
-    <a href="{% url 'room_add' %}" class="btn btn-primary px-4 py-2 rounded-pill shadow-sm">
-        <i class="bi bi-plus-lg me-2"></i>Add New Room
+    <a href="{% url 'room_add' %}" class="btn btn-primary px-4 py-2 rounded-pill shadow-sm d-flex align-items-center">
+        <i data-lucide="plus" class="me-2" style="width: 18px;"></i>Add New Room
     </a>
     {% endif %}
 </div>
@@ -45,17 +45,17 @@
                         <td class="text-end pe-4">
                             <div class="d-flex justify-content-end gap-2">
                                 <a href="{% url 'booking_add' %}?room={{ room.id }}"
-                                    class="btn btn-sm btn-primary rounded-pill px-3">
-                                    <i class="bi bi-calendar-check me-1"></i>Book
+                                    class="btn btn-sm btn-primary rounded-pill px-3 d-flex align-items-center">
+                                    <i data-lucide="calendar-check" class="me-1" style="width: 14px;"></i>Book
                                 </a>
                                 {% if user.is_staff %}
                                 <a href="{% url 'room_edit' room.id %}"
-                                    class="btn btn-sm btn-light rounded-pill px-3 border border-light-subtle">
-                                    <i class="bi bi-pencil-square me-1"></i>Edit
+                                    class="btn btn-sm btn-light rounded-pill px-3 border border-light-subtle d-flex align-items-center">
+                                    <i data-lucide="edit-3" class="me-1" style="width: 14px;"></i>Edit
                                 </a>
                                 <a href="{% url 'room_delete' room.id %}"
-                                    class="btn btn-sm btn-outline-danger rounded-pill px-3">
-                                    <i class="bi bi-trash me-1"></i>Delete
+                                    class="btn btn-sm btn-outline-danger rounded-pill px-3 d-flex align-items-center">
+                                    <i data-lucide="trash-2" class="me-1" style="width: 14px;"></i>Delete
                                 </a>
                                 {% endif %}
                             </div>
@@ -65,7 +65,8 @@
                     <tr>
                         <td colspan="5" class="text-center py-5">
                             <div class="text-muted">
-                                <i class="bi bi-door-closed display-4 mb-3 d-block"></i>
+                                <i data-lucide="door-closed" class="mx-auto mb-3 d-block opacity-25"
+                                    style="width: 64px; height: 64px;"></i>
                                 <p>No rooms found. Start by adding one!</p>
                             </div>
                         </td>
