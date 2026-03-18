@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from .models import Room, Hotel, Booking
 from .forms import BookingForm
@@ -182,3 +182,22 @@ def update_booking_status(request, pk, status):
         booking.status = status
         booking.save()
     return redirect('booking_list')
+
+def booking_bill(request, pk):
+    if not request.user.is_authenticated:
+        return redirect('login')
+    booking = get_object_or_404(Booking, pk=pk)
+    if not request.user.is_staff and booking.customer.name != request.user.username:
+        return redirect('booking_list')
+        
+    nights = (booking.check_out - booking.check_in).days
+    if nights < 1:
+        nights = 1
+    total_amount = nights * booking.room.price_per_night
+
+    context = {
+        'booking': booking,
+        'nights': nights,
+        'total_amount': total_amount,
+    }
+    return render(request, 'hotel/bill.html', context)

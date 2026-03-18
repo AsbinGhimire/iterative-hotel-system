@@ -79,6 +79,12 @@
                                     <i data-lucide="edit-3" style="width: 14px;"></i>
                                 </a>
 
+                                <a href="{% url 'booking_bill' booking.id %}"
+                                    class="btn btn-sm btn-outline-primary rounded-pill px-3 d-flex align-items-center"
+                                    title="View Bill">
+                                    <i data-lucide="file-text" style="width: 14px;" class="me-1"></i>Bill
+                                </a>
+
                                 {% if user.is_staff and booking.status == 'Cancelled' %}
                                 <a href="{% url 'booking_delete' booking.id %}"
                                     class="btn btn-sm btn-outline-danger rounded-pill px-3 d-flex align-items-center"

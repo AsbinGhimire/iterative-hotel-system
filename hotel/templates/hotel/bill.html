@@ -1,0 +1,159 @@
+{% extends 'hotel/base.html' %}
+
+{% block content %}
+<style>
+    .invoice-card {
+        background: white;
+        border-radius: 24px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+        padding: 3rem;
+        border: 1px solid rgba(0,0,0,0.05);
+        margin-bottom: 3rem;
+    }
+    .invoice-header {
+        border-bottom: 2px dashed #e2e8f0;
+        padding-bottom: 2rem;
+        margin-bottom: 2rem;
+    }
+    .invoice-title {
+        color: #1e3a8a;
+        font-weight: 800;
+        letter-spacing: -1px;
+    }
+    .invoice-table th {
+        background-color: #f8fafc;
+        color: #64748b;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-size: 0.85rem;
+        padding: 1rem;
+    }
+    .invoice-table td {
+        padding: 1rem;
+        vertical-align: middle;
+        font-weight: 500;
+    }
+    .invoice-total {
+        background: gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+        background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+        color: white;
+        border-radius: 16px;
+        padding: 1.5rem;
+    }
+    @media print {
+        body * {
+            visibility: hidden;
+        }
+        .invoice-card, .invoice-card * {
+            visibility: visible;
+        }
+        .invoice-card {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            max-width: 100%;
+            box-shadow: none !important;
+            border: none !important;
+            padding: 0;
+            margin: 0;
+        }
+        .no-print {
+            display: none !important;
+        }
+    }
+</style>
+
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4 no-print">
+        <a href="{% url 'booking_list' %}" class="btn btn-light rounded-pill px-4 py-2 d-flex align-items-center shadow-sm border">
+            <i data-lucide="arrow-left" class="me-2" style="width: 18px;"></i>Back to Bookings
+        </a>
+        <button onclick="window.print()" class="btn btn-primary rounded-pill px-4 py-2 d-flex align-items-center shadow-sm">
+            <i data-lucide="printer" class="me-2" style="width: 18px;"></i>Download PDF / Print
+        </button>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="invoice-card">
+                <!-- Header -->
+                <div class="invoice-header d-flex flex-column flex-sm-row justify-content-between align-items-start">
+                    <div class="mb-4 mb-sm-0">
+                        <h2 class="invoice-title display-5 mb-2 d-flex align-items-center">
+                            <i data-lucide="hotel" class="me-2 text-primary" style="width: 40px; height: 40px;"></i>Hotel IMS
+                        </h2>
+                        <p class="text-muted mb-0">123 Hospitality Lane, Kathmandu</p>
+                        <p class="text-muted mb-0">support@hotelims.com | +977 980 000 0000</p>
+                    </div>
+                    <div class="text-sm-end">
+                        <div class="bg-primary bg-opacity-10 text-primary rounded-3 px-3 py-2 d-inline-block mb-3">
+                            <h4 class="fw-bold mb-0" style="letter-spacing: 1px;">INVOICE</h4>
+                        </div>
+                        <p class="mb-1 fw-bold text-muted">Invoice No: <span class="text-dark">#INV-00{{ booking.id }}</span></p>
+                        <p class="mb-0 fw-bold text-muted">Date: <span class="text-dark">{% now "N j, Y" %}</span></p>
+                    </div>
+                </div>
+
+                <!-- Billing Info -->
+                <div class="row mb-5">
+                    <div class="col-sm-6">
+                        <h6 class="text-uppercase text-muted fw-bold mb-3" style="letter-spacing: 1px;">Billed To:</h6>
+                        <h5 class="fw-bold mb-1">{{ booking.customer.name }}</h5>
+                        <p class="text-muted mb-1 d-flex align-items-center"><i data-lucide="phone" style="width: 14px;" class="me-2"></i>{{ booking.customer.phone }}</p>
+                        <p class="text-muted mb-0 d-flex align-items-center"><i data-lucide="map-pin" style="width: 14px;" class="me-2"></i>{{ booking.customer.address|default:"N/A" }}</p>
+                    </div>
+                    <div class="col-sm-6 text-sm-end mt-4 mt-sm-0">
+                        <h6 class="text-uppercase text-muted fw-bold mb-3" style="letter-spacing: 1px;">Booking Details:</h6>
+                        <h5 class="fw-bold mb-1">{{ booking.hotel.name }}</h5>
+                        <p class="text-muted mb-1"><span class="fw-bold">Check-In:</span> {{ booking.check_in|date:"M d, Y" }}</p>
+                        <p class="text-muted mb-0"><span class="fw-bold">Check-Out:</span> {{ booking.check_out|date:"M d, Y" }}</p>
+                    </div>
+                </div>
+
+                <!-- Items Table -->
+                <div class="table-responsive mb-4">
+                    <table class="table invoice-table border-top">
+                        <thead>
+                            <tr>
+                                <th>Description</th>
+                                <th class="text-center">Rate / Night</th>
+                                <th class="text-center">Nights</th>
+                                <th class="text-end">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="fw-bold text-dark">Room {{ booking.room.room_number }}</div>
+                                    <div class="small text-muted">{{ booking.room.room_type }} Room</div>
+                                </td>
+                                <td class="text-center">${{ booking.room.price_per_night }}</td>
+                                <td class="text-center">{{ nights }}</td>
+                                <td class="text-end fw-bold">${{ total_amount }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Total -->
+                <div class="row justify-content-end mb-4">
+                    <div class="col-sm-6 col-md-5">
+                        <div class="invoice-total d-flex justify-content-between align-items-center shadow-sm">
+                            <span class="fs-5 fw-bold text-white opacity-75">Total Due:</span>
+                            <span class="fs-3 fw-bolder text-white">${{ total_amount }}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Footer -->
+                <div class="text-center mt-5 pt-4 border-top">
+                    <p class="text-muted fw-bold mb-1">Thank you for choosing Hotel IMS!</p>
+                    <p class="small text-muted mb-0">If you have any questions concerning this invoice, please contact support.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
