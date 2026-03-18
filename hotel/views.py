@@ -36,6 +36,9 @@ def home(request):
 def about(request):
     return render(request, 'hotel/about.html')
 
+def contact(request):
+    return render(request, 'hotel/contact.html')
+
 class AdminRequiredMixin(UserPassesTestMixin):
     def test_func(self):
         return self.request.user.is_staff
