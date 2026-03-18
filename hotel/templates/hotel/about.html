@@ -2,143 +2,292 @@
 
 {% block content %}
 <style>
+    /* Premium Aesthetic Styles */
     .about-hero {
-        background: linear-gradient(135deg, #1a1c23 0%, #3b82f6 100%);
+        background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
         color: white;
-        padding: 5rem 2rem;
-        border-radius: 24px;
-        margin-bottom: 4rem;
+        padding: 6rem 2rem;
+        border-radius: 30px;
+        margin-bottom: 5rem;
+        position: relative;
+        overflow: hidden;
         text-align: center;
+        box-shadow: 0 20px 40px rgba(30, 58, 138, 0.2);
+    }
+
+    .about-hero::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 60%);
+        animation: rotate 20s linear infinite;
+    }
+
+    @keyframes rotate {
+        100% { transform: rotate(360deg); }
+    }
+
+    .hero-badge {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 0.5rem 1.5rem;
+        border-radius: 50px;
+        font-size: 0.9rem;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        display: inline-block;
+        margin-bottom: 1.5rem;
     }
 
     .feature-icon-box {
-        width: 64px;
-        height: 64px;
-        background: rgba(59, 130, 246, 0.1);
-        color: #3b82f6;
-        border-radius: 16px;
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+        color: #2563eb;
+        border-radius: 18px;
         display: flex;
         align-items: center;
         justify-content: center;
         margin-bottom: 1.5rem;
-        font-size: 1.5rem;
+        transition: all 0.3s ease;
     }
 
     .about-card {
-        border: none;
+        border: 1px solid rgba(0,0,0,0.05);
+        border-radius: 24px;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        background: #ffffff;
+        overflow: hidden;
+    }
+
+    .about-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08) !important;
+        border-color: rgba(37, 99, 235, 0.1);
+    }
+    
+    .about-card:hover .feature-icon-box {
+        background: #2563eb;
+        color: white;
+        transform: scale(1.1);
+    }
+
+    /* Stats Section */
+    .stat-box {
+        background: #ffffff;
+        border: 1px solid rgba(0,0,0,0.05);
+        border-radius: 24px;
+        padding: 2.5rem 1rem;
+        text-align: center;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+    }
+    
+    .stat-box::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(90deg, #2563eb, #60a5fa);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.3s ease;
+        z-index: -1;
+    }
+
+    .stat-box:hover {
+        box-shadow: 0 15px 35px rgba(0,0,0,0.06);
+    }
+    
+    .stat-box:hover::after {
+        transform: scaleX(1);
+    }
+
+    /* Core Values Section */
+    .core-values-section {
+        background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+        border-radius: 30px;
+        padding: 5rem 3rem;
+        margin-top: 5rem;
+        border: 1px solid rgba(0,0,0,0.03);
+    }
+
+    .value-item {
+        display: flex;
+        gap: 1.5rem;
+        align-items: flex-start;
+        padding: 1.5rem;
         border-radius: 20px;
         transition: all 0.3s ease;
     }
 
-    .about-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05) !important;
+    .value-item:hover {
+        background: #ffffff;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.04);
     }
 
-    .creator-section {
+    .value-icon {
         background: white;
-        border-radius: 24px;
-        padding: 3rem;
-        margin-top: 4rem;
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 15px;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.04);
+        color: #1e40af;
+        flex-shrink: 0;
+    }
+    
+    .text-gradient {
+        background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    
+    .btn-hover-transform:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
     }
 </style>
 
-<div class="about-hero shadow-lg">
-    <h1 class="display-3 fw-bold mb-3">About Hotel IMS</h1>
-    <p class="lead opacity-75 mx-auto px-3" style="max-width: 700px;">
-        Simplifying hospitality management through innovative technology and intuitive design.
-    </p>
+<div class="about-hero">
+    <div class="position-relative z-1">
+        <div class="hero-badge fw-bold">Elevating Hospitality</div>
+        <h1 class="display-3 fw-bolder mb-4">About Hotel IMS</h1>
+        <p class="lead opacity-75 mx-auto px-3 mb-0" style="max-width: 750px; font-weight: 300;">
+            We are redefining hotel management through intelligent automation, stunning design, and an unwavering commitment to operational excellence.
+        </p>
+    </div>
 </div>
 
 <div class="row g-5 align-items-center mb-5 px-3 px-sm-0">
-    <div class="col-lg-6 text-center text-lg-start">
-        <h2 class="fw-bold mb-4">Our Mission</h2>
-        <p class="text-muted lead">
-            The Hotel Information Management System (IMS) was built with a single goal: to empower hotel owners and
-            managers with the tools they need to thrive in a digital-first world.
+    <div class="col-lg-5 text-center text-lg-start">
+        <h2 class="display-5 fw-bold mb-4">Our <span class="text-gradient">Mission</span></h2>
+        <p class="text-muted lead" style="font-size: 1.15rem; line-height: 1.8;">
+            Hotel IMS was engineered with a single, powerful vision: to provide hotel owners and staff with a sophisticated yet effortless platform to thrive in a digital-first world.
         </p>
-        <p class="text-muted">
-            We believe that managing a hospitality business should be as seamless as the guest experience itself. Our
-            platform provides a centralized hub for tracking inventory, managing bookings, and analyzing performance,
-            all in one premium interface.
+        <p class="text-muted" style="line-height: 1.8;">
+            We believe that robust backend functionality shouldn't compromise frontend elegance. Our system eliminates friction, allowing hospitality professionals to focus on what truly matters—delivering unforgettable guest experiences.
         </p>
-        <div class="d-flex gap-3 mt-4">
-            <div class="p-3 bg-white rounded-4 shadow-sm text-center flex-fill">
-                <div class="h3 fw-bold text-primary mb-0">100%</div>
-                <small class="text-muted">Secure</small>
+        
+        <div class="d-flex flex-wrap gap-3 mt-5">
+            <div class="stat-box flex-fill">
+                <h3 class="fw-bold mb-1 text-dark">99.9%</h3>
+                <span class="text-muted small fw-bold text-uppercase" style="letter-spacing: 1px;">Uptime</span>
             </div>
-            <div class="p-3 bg-white rounded-4 shadow-sm text-center flex-fill">
-                <div class="h3 fw-bold text-success mb-0">24/7</div>
-                <small class="text-muted">Accessible</small>
+            <div class="stat-box flex-fill">
+                <h3 class="fw-bold mb-1 text-dark">24/7</h3>
+                <span class="text-muted small fw-bold text-uppercase" style="letter-spacing: 1px;">Support</span>
             </div>
-            <div class="p-3 bg-white rounded-4 shadow-sm text-center flex-fill">
-                <div class="h3 fw-bold text-info mb-0">HD</div>
-                <small class="text-muted">Visuals</small>
+            <div class="stat-box flex-fill">
+                <h3 class="fw-bold mb-1 text-dark">100%</h3>
+                <span class="text-muted small fw-bold text-uppercase" style="letter-spacing: 1px;">Secure</span>
             </div>
         </div>
     </div>
-    <div class="col-lg-6">
-        <div class="row g-4">
-            <div class="col-md-6">
-                <div class="card about-card h-100 p-4 bg-white shadow-sm">
-                    <div class="feature-icon-box">
-                        <i data-lucide="package" style="width: 24px; height: 24px;"></i>
+    
+    <div class="col-lg-7">
+        <div class="row g-4 ps-lg-4">
+            <div class="col-sm-6">
+                <div class="card about-card h-100 p-4">
+                    <div class="feature-icon-box shadow-sm">
+                        <i data-lucide="layout-dashboard" style="width: 28px; height: 28px;"></i>
                     </div>
-                    <h5 class="fw-bold">Inventory Control</h5>
-                    <p class="small text-muted mb-0">Deep management of room types, amenities, and availability status.
-                    </p>
+                    <h5 class="fw-bold mb-3">Intuitive Dashboard</h5>
+                    <p class="text-muted mb-0" style="font-size: 0.95rem;">Experience a clutter-free interface that brings critical insights and metrics directly to your fingertips.</p>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="card about-card h-100 p-4 bg-white shadow-sm">
-                    <div class="feature-icon-box">
-                        <i data-lucide="users" style="width: 24px; height: 24px;"></i>
+            <div class="col-sm-6">
+                <div class="card about-card h-100 p-4" style="transform: translateY(20px);">
+                    <div class="feature-icon-box shadow-sm">
+                        <i data-lucide="zap" style="width: 28px; height: 28px;"></i>
                     </div>
-                    <h5 class="fw-bold">Guest Centric</h5>
-                    <p class="small text-muted mb-0">Streamlined booking processes designed for speed and guest
-                        satisfaction.</p>
+                    <h5 class="fw-bold mb-3">Lightning Fast</h5>
+                    <p class="text-muted mb-0" style="font-size: 0.95rem;">Optimized workflows and rapid response times ensure you stay agile in a fast-paced environment.</p>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="card about-card h-100 p-4 bg-white shadow-sm">
-                    <div class="feature-icon-box">
-                        <i data-lucide="shield-check" style="width: 24px; height: 24px;"></i>
+            <div class="col-sm-6">
+                <div class="card about-card h-100 p-4">
+                    <div class="feature-icon-box shadow-sm">
+                        <i data-lucide="shield-check" style="width: 28px; height: 28px;"></i>
                     </div>
-                    <h5 class="fw-bold">Role-Based Access</h5>
-                    <p class="small text-muted mb-0">Granular permissions ensuring each staff member has the right level
-                        of access.</p>
+                    <h5 class="fw-bold mb-3">Enterprise Security</h5>
+                    <p class="text-muted mb-0" style="font-size: 0.95rem;">Granular role-based access and robust data protection protocols keep your business secure.</p>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="card about-card h-100 p-4 bg-white shadow-sm">
-                    <div class="feature-icon-box">
-                        <i data-lucide="palette" style="width: 24px; height: 24px;"></i>
+            <div class="col-sm-6">
+                <div class="card about-card h-100 p-4" style="transform: translateY(20px);">
+                    <div class="feature-icon-box shadow-sm">
+                        <i data-lucide="sparkles" style="width: 28px; height: 28px;"></i>
                     </div>
-                    <h5 class="fw-bold">Modern Design</h5>
-                    <p class="small text-muted mb-0">A premium interface that makes management tasks a visual pleasure.
-                    </p>
+                    <h5 class="fw-bold mb-3">Premium Aesthetic</h5>
+                    <p class="text-muted mb-0" style="font-size: 0.95rem;">A visually stunning design language that turns routine management tasks into a pleasant experience.</p>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<div class="creator-section shadow-sm text-center">
-    <div class="mb-4">
-        <div class="icon-box icon-box-lg bg-primary mx-auto mb-3 shadow-sm">
-            <i data-lucide="terminal" class="text-white" style="width: 32px; height: 32px;"></i>
-        </div>
-        <h3 class="fw-bold">The Visionary Behind</h3>
-        <p class="text-muted">Developed with passion for the hospitality industry.</p>
-    </div>
-    <div class="mx-auto" style="max-width: 600px;">
-        <p class="mb-4">
-            Hotel IMS is an iterative project focused on combining robust backend engineering with world-class frontend
-            aesthetics. It stands as a testament to modern software development standards.
+<!-- Replaced creator-section with Core Values -->
+<div class="core-values-section shadow-sm">
+    <div class="text-center mb-5">
+        <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill fw-bold mb-3" style="letter-spacing: 1px;">WHY CHOOSE US</span>
+        <h2 class="display-6 fw-bold mb-3">Our Core Values</h2>
+        <p class="text-muted mx-auto" style="max-width: 600px; font-size: 1.1rem;">
+            We build software that is as reliable as it is beautiful. These foundational principles guide everything we develop.
         </p>
+    </div>
+    
+    <div class="row g-4 mt-2">
+        <div class="col-md-4">
+            <div class="value-item">
+                <div class="value-icon">
+                    <i data-lucide="gem" style="width: 24px; height: 24px;"></i>
+                </div>
+                <div>
+                    <h5 class="fw-bold mb-2">Excellence</h5>
+                    <p class="text-muted mb-0 small" style="line-height: 1.6;">We refuse to compromise on quality. From the deepest backend logic to the finest UI details, we strive for perfection.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="value-item">
+                <div class="value-icon">
+                    <i data-lucide="users" style="width: 24px; height: 24px;"></i>
+                </div>
+                <div>
+                    <h5 class="fw-bold mb-2">User-Centric</h5>
+                    <p class="text-muted mb-0 small" style="line-height: 1.6;">Every feature is designed with the end-user in mind, ensuring a seamless and intuitive experience for hotel staff.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="value-item">
+                <div class="value-icon">
+                    <i data-lucide="trending-up" style="width: 24px; height: 24px;"></i>
+                </div>
+                <div>
+                    <h5 class="fw-bold mb-2">Innovation</h5>
+                    <p class="text-muted mb-0 small" style="line-height: 1.6;">We continuously iterate and adopt modern technologies to keep your business ahead of the curve.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="text-center mt-5 pt-5 border-top">
+        <h4 class="fw-bold mb-4">Ready to elevate your hotel management?</h4>
         <div class="d-flex justify-content-center gap-3">
-            <a href="#" class="btn btn-dark rounded-pill px-4">Github Portfolio</a>
-            <a href="#" class="btn btn-outline-primary rounded-pill px-4">Contact Developer</a>
+            <a href="/" class="btn btn-primary rounded-pill px-5 py-3 fw-bold shadow-sm btn-hover-transform" style="transition: all 0.3s ease;">Get Started Today</a>
+            <a href="/" class="btn btn-light rounded-pill px-5 py-3 fw-bold border btn-hover-transform" style="transition: all 0.3s ease;">Contact Sales</a>
         </div>
     </div>
 </div>
