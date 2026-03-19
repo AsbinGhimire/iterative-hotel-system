@@ -17,7 +17,7 @@ def home(request):
             hotels = Hotel.objects.all()
             room_count = Room.objects.count()
             # We will show all hotels for regular users to book.
-            booking_count = Booking.objects.filter(customer=request.user.username).count() # simplistic link
+            booking_count = Booking.objects.filter(user=request.user).count() # simplistic link
             
         hotel_count = hotels.count()
         latest_hotels = hotels.order_by('-id')[:3]
@@ -133,7 +133,7 @@ class BookingListView(LoginRequiredMixin, ListView):
             return Booking.objects.all()
         # For simplicity currently, let's filter by customer name matching username.
         # Ideally, there is a one-to-one link from User to Customer.
-        return Booking.objects.filter(customer=self.request.user.username)
+        return Booking.objects.filter(user=self.request.user)
 
 
 class BookingCreateView(LoginRequiredMixin, CreateView):
@@ -147,6 +147,10 @@ class BookingCreateView(LoginRequiredMixin, CreateView):
         kwargs['user'] = self.request.user
         return kwargs
 
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
 
 class BookingUpdateView(LoginRequiredMixin, UpdateView):
     model = Booking
@@ -157,7 +161,7 @@ class BookingUpdateView(LoginRequiredMixin, UpdateView):
     def get_queryset(self):
         if self.request.user.is_staff:
             return Booking.objects.all()
-        return Booking.objects.filter(customer=self.request.user.username)
+        return Booking.objects.filter(user=self.request.user)
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -186,7 +190,7 @@ def booking_bill(request, pk):
     if not request.user.is_authenticated:
         return redirect('login')
     booking = get_object_or_404(Booking, pk=pk)
-    if not request.user.is_staff and booking.customer != request.user.username:
+    if not request.user.is_staff and booking.user != request.user:
         return redirect('booking_list')
         
     nights = (booking.check_out - booking.check_in).days

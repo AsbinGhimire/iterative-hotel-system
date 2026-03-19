@@ -14,5 +14,9 @@ class BookingForm(forms.ModelForm):
         user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
         if user:
-            self.fields['hotel'].queryset = Hotel.objects.filter(manager=user)
-            self.fields['room'].queryset = Room.objects.filter(hotel__manager=user)
+            if user.is_staff:
+                self.fields['hotel'].queryset = Hotel.objects.filter(manager=user)
+                self.fields['room'].queryset = Room.objects.filter(hotel__manager=user)
+            else:
+                self.fields['hotel'].queryset = Hotel.objects.all()
+                self.fields['room'].queryset = Room.objects.filter(is_available=True)
