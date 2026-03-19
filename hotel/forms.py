@@ -25,3 +25,17 @@ class ProfileUpdateForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ['profile_photo']
+
+class HotelForm(forms.ModelForm):
+    class Meta:
+        model = Hotel
+        fields = ['name', 'location', 'contact_info', 'total_rooms', 'star_rating', 'image', 'description', 'amenities', 'website', 'email']
+
+class RoomForm(forms.ModelForm):
+    class Meta:
+        model = Room
+        fields = ['room_number', 'room_type', 'price_per_night', 'is_available', 'hotel', 'description', 'size']
+        widgets = {
+            'description': forms.Textarea(attrs={'rows': 3}),
+            'size': forms.NumberInput(attrs={'placeholder': 'e.g. 25'}),
+        }

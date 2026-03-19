@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from .models import Room, Hotel, Booking, Profile
-from .forms import BookingForm, ProfileUpdateForm
+from .forms import BookingForm, ProfileUpdateForm, HotelForm, RoomForm
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.models import User
 
 
 
@@ -52,7 +53,7 @@ class HotelListView(LoginRequiredMixin, ListView):
 
 class HotelCreateView(LoginRequiredMixin, AdminRequiredMixin, CreateView):
     model = Hotel
-    fields = ['name', 'location', 'contact_info', 'total_rooms', 'star_rating', 'image']
+    form_class = HotelForm
     success_url = reverse_lazy('hotel_list')
     template_name = 'hotel/hotel_form.html'
 
@@ -62,7 +63,7 @@ class HotelCreateView(LoginRequiredMixin, AdminRequiredMixin, CreateView):
 
 class HotelUpdateView(LoginRequiredMixin, AdminRequiredMixin, UpdateView):
     model = Hotel
-    fields = ['name', 'location', 'contact_info', 'total_rooms', 'star_rating', 'image']
+    form_class = HotelForm
     success_url = reverse_lazy('hotel_list')
     template_name = 'hotel/hotel_form.html'
 
@@ -77,6 +78,20 @@ class HotelDeleteView(LoginRequiredMixin, AdminRequiredMixin, DeleteView):
     def get_queryset(self):
         return Hotel.objects.all()
 
+class HotelDetailView(DetailView):
+    model = Hotel
+    template_name = 'hotel/hotel_detail.html'
+    context_object_name = 'hotel'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Convert amenities string to list
+        if self.object.amenities:
+            context['amenity_list'] = [a.strip() for a in self.object.amenities.split(',')]
+        else:
+            context['amenity_list'] = []
+        return context
+
 
 # Scoped Room Views
 class RoomListView(LoginRequiredMixin, ListView):
@@ -89,7 +104,7 @@ class RoomListView(LoginRequiredMixin, ListView):
 
 class RoomCreateView(LoginRequiredMixin, AdminRequiredMixin, CreateView):
     model = Room
-    fields = ['room_number', 'room_type', 'price_per_night', 'is_available', 'hotel']
+    form_class = RoomForm
     success_url = reverse_lazy('room_list')
     template_name = 'hotel/room_form.html'
 
@@ -101,7 +116,7 @@ class RoomCreateView(LoginRequiredMixin, AdminRequiredMixin, CreateView):
 
 class RoomUpdateView(LoginRequiredMixin, AdminRequiredMixin, UpdateView):
     model = Room
-    fields = ['room_number', 'room_type', 'price_per_night', 'is_available', 'hotel']
+    form_class = RoomForm
     success_url = reverse_lazy('room_list')
     template_name = 'hotel/room_form.html'
 
@@ -127,13 +142,23 @@ class RoomDeleteView(LoginRequiredMixin, AdminRequiredMixin, DeleteView):
 class BookingListView(LoginRequiredMixin, ListView):
     model = Booking
     template_name = 'hotel/booking_list.html'
+    context_object_name = 'bookings'
 
     def get_queryset(self):
         if self.request.user.is_staff:
-            return Booking.objects.all()
-        # For simplicity currently, let's filter by customer name matching username.
-        # Ideally, there is a one-to-one link from User to Customer.
-        return Booking.objects.filter(user=self.request.user)
+            return Booking.objects.all().order_by('-id')
+        return Booking.objects.filter(user=self.request.user).order_by('-id')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        qs = self.get_queryset()
+        context['stats'] = {
+            'total': qs.count(),
+            'active': qs.filter(status__in=['Booked', 'Checked-In']).count(),
+            'completed': qs.filter(status='Checked-Out').count(),
+            'cancelled': qs.filter(status='Cancelled').count(),
+        }
+        return context
 
 
 class BookingCreateView(LoginRequiredMixin, CreateView):
@@ -226,3 +251,13 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_object(self):
         return self.request.user.profile
+
+class UserListView(LoginRequiredMixin, AdminRequiredMixin, ListView):
+    model = User
+    template_name = 'hotel/user_list.html'
+    context_object_name = 'users'
+
+class UserDeleteView(LoginRequiredMixin, AdminRequiredMixin, DeleteView):
+    model = User
+    template_name = 'hotel/user_confirm_delete.html'
+    success_url = reverse_lazy('user_list')

@@ -1,80 +1,116 @@
 {% extends 'hotel/base.html' %}
 
 {% block content %}
-<div class="d-flex flex-column flex-sm-row justify-content-between align-items-center mb-4">
-    <h2 class="fw-bold mb-3 mb-sm-0">{% if user.is_staff %}Managed Rooms{% else %}Available Rooms{% endif %}</h2>
+<div class="d-flex flex-column flex-sm-row justify-content-between align-items-center mb-5 animate-fade-in">
+    <div>
+        <h2 class="fw-bold mb-1">{% if user.is_staff %}Managed Accommodations{% else %}Discovery - Rooms{% endif %}</h2>
+        <p class="text-muted small mb-0">Explore our curated selection of luxury stays.</p>
+    </div>
     {% if user.is_staff %}
-    <a href="{% url 'room_add' %}" class="btn btn-primary px-4 py-2 rounded-pill shadow-sm d-flex align-items-center">
-        <i data-lucide="plus" class="me-2" style="width: 18px;"></i>Add New Room
+    <a href="{% url 'room_add' %}" class="btn btn-gradient-primary rounded-pill px-4 py-3 shadow mt-3 mt-sm-0">
+        <i data-lucide="plus-circle" class="me-2" style="width: 20px;"></i>Register New Room
     </a>
     {% endif %}
 </div>
 
-<div class="card border-0 shadow-sm rounded-4">
-    <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="bg-light">
-                    <tr>
-                        <th class="ps-4 py-3">Room Number</th>
-                        <th class="py-3">Type</th>
-                        <th class="py-3 text-center">Price / Night</th>
-                        <th class="py-3 text-center">Status</th>
+<div class="row g-4 mb-5">
+    {% for room in object_list %}
+    <div class="col-md-6 col-lg-3 animate-fade-in" style="animation-delay: 0.1s">
+        <div class="room-card card h-100 border-0 shadow-sm overflow-hidden" style="border-radius: 25px;">
+            <!-- Text-Centric Compact Header -->
+            <div class="p-4 pb-0">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <h4 class="fw-bold text-dark mb-1">Room {{ room.room_number }}</h4>
+                        <div class="d-flex align-items-center text-primary" style="font-size: 0.8rem;">
+                            <i data-lucide="building-2" class="me-1" style="width: 14px;"></i>
+                            {{ room.hotel.name|truncatechars:18 }}
+                        </div>
+                    </div>
+                    <span class="badge {% if room.is_available %}bg-success{% else %}bg-danger{% endif %} bg-opacity-10 {% if room.is_available %}text-success{% else %}text-danger{% endif %} border rounded-pill px-3 py-2 fw-bold" style="font-size: 0.7rem;">
+                        {% if room.is_available %}Available{% else %}Occupied{% endif %}
+                    </span>
+                </div>
+
+                <div class="d-flex flex-wrap gap-2 mb-3">
+                    <span class="badge bg-light text-muted border rounded-pill px-3 py-2 d-flex align-items-center" style="font-size: 0.7rem;">
+                        <i data-lucide="maximize" class="me-2" style="width: 12px;"></i>
+                        {{ room.size|default:"30" }} sqm
+                    </span>
+                    <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-10 rounded-pill px-3 py-2" style="font-size: 0.7rem;">
+                        {{ room.room_type }}
+                    </span>
+                </div>
+                
+                <div class="fs-4 fw-bold text-dark mb-3">
+                    ${{ room.price_per_night }}<span class="text-muted fw-normal fs-6">/night</span>
+                </div>
+            </div>
+
+            <div class="card-body p-4 pt-0 d-flex flex-column">
+                <p class="text-muted line-clamp-2 mb-4 flex-grow-1" style="font-size: 0.85rem; min-height: 2.6rem;">
+                    {{ room.description|default:"Experience refined living in our meticulously designed luxury suites." }}
+                </p>
+
+                <div class="d-flex justify-content-between align-items-center mt-auto pt-3 border-top border-light">
+                    <div class="d-flex gap-2">
                         {% if user.is_staff %}
-                        <th class="py-3 text-end pe-4">Actions</th>
-                        {% else %}
-                        <th class="py-3 text-end pe-4">Actions</th>
+                        <a href="{% url 'room_edit' room.id %}" class="btn btn-icon-round btn-light" title="Edit" style="width: 38px; height: 38px;">
+                            <i data-lucide="edit-3" style="width: 16px;"></i>
+                        </a>
+                        <a href="{% url 'room_delete' room.id %}" class="btn btn-icon-round btn-outline-danger" title="Delete" style="width: 38px; height: 38px;">
+                            <i data-lucide="trash-2" style="width: 16px;"></i>
+                        </a>
                         {% endif %}
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for room in object_list %}
-                    <tr>
-                        <td class="ps-4 fw-bold text-primary">{{ room.room_number }}</td>
-                        <td>{{ room.room_type }}</td>
-                        <td class="text-center fw-bold text-success">${{ room.price_per_night }}</td>
-                        <td class="text-center">
-                            {% if room.is_available %}
-                            <span
-                                class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-3">Available</span>
-                            {% else %}
-                            <span
-                                class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 rounded-pill px-3">Occupied</span>
-                            {% endif %}
-                        </td>
-                        <td class="text-end pe-4">
-                            <div class="d-flex justify-content-end gap-2">
-                                <a href="{% url 'booking_add' %}?room={{ room.id }}"
-                                    class="btn btn-sm btn-primary rounded-pill px-3 d-flex align-items-center">
-                                    <i data-lucide="calendar-check" class="me-1" style="width: 14px;"></i>Book
-                                </a>
-                                {% if user.is_staff %}
-                                <a href="{% url 'room_edit' room.id %}"
-                                    class="btn btn-sm btn-light rounded-pill px-3 border border-light-subtle d-flex align-items-center">
-                                    <i data-lucide="edit-3" class="me-1" style="width: 14px;"></i>Edit
-                                </a>
-                                <a href="{% url 'room_delete' room.id %}"
-                                    class="btn btn-sm btn-outline-danger rounded-pill px-3 d-flex align-items-center">
-                                    <i data-lucide="trash-2" class="me-1" style="width: 14px;"></i>Delete
-                                </a>
-                                {% endif %}
-                            </div>
-                        </td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="5" class="text-center py-5">
-                            <div class="text-muted">
-                                <i data-lucide="door-closed" class="mx-auto mb-3 d-block opacity-25"
-                                    style="width: 64px; height: 64px;"></i>
-                                <p>No rooms found. Start by adding one!</p>
-                            </div>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                    </div>
+                    <a href="{% url 'booking_add' %}?room={{ room.id }}" class="btn btn-gradient-primary rounded-pill px-4 py-2 shadow-sm d-flex align-items-center" style="font-size: 0.85rem;">
+                        <i data-lucide="calendar-check" class="me-2" style="width: 16px;"></i>Reserve
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
+    {% empty %}
+    <div class="col-12 py-5 text-center">
+        <div class="py-5 bg-light rounded-5 border border-dashed">
+            <i data-lucide="door-closed" class="text-muted opacity-25 mx-auto mb-3 d-block" style="width: 60px; height: 60px;"></i>
+            <h4 class="text-muted fw-bold">No rooms currently available.</h4>
+            <p class="text-muted mb-0">Check back later or browse other properties.</p>
+        </div>
+    </div>
+    {% endfor %}
 </div>
+
+<style>
+    .room-card {
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        border: 1px solid rgba(0,0,0,0.05) !important;
+    }
+    .room-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.1) !important;
+        border-color: rgba(13, 110, 253, 0.2) !important;
+    }
+    .btn-icon-round {
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: all 0.2s ease;
+    }
+    .line-clamp-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    .animate-fade-in {
+        animation: fadeIn 0.8s ease-out both;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
 {% endblock %}

@@ -257,6 +257,29 @@
     .hover-lift:hover .premium-icon {
         transform: rotate(5deg);
     }
+
+    /* Premium Dropdown Styles */
+    .dropdown-menu {
+        animation: dropdownFadeIn 0.3s ease-out;
+    }
+
+    @keyframes dropdownFadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .dropdown-item {
+        transition: all 0.2s ease;
+        border-radius: 8px;
+        margin: 0 8px;
+        width: calc(100% - 16px);
+    }
+
+    .dropdown-item:hover {
+        background-color: rgba(59, 130, 246, 0.1);
+        color: var(--primary-color) !important;
+        transform: translateX(5px);
+    }
 </style>
 
 <body class="bg-light">
@@ -274,7 +297,6 @@
 
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto align-items-center">
-                    {% if user.is_authenticated %}
                     <li class="nav-item">
                         <a class="nav-link d-flex align-items-center" href="{% url 'hotel_list' %}">
                             <i data-lucide="building-2" class="me-2" style="width: 18px;"></i>Hotels
@@ -291,35 +313,53 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link d-flex align-items-center" href="{% url 'profile' %}">
-                            <i data-lucide="user" class="me-2" style="width: 18px;"></i>Profile
-                        </a>
-                    </li>
-                    {% endif %}
-                    <li class="nav-item">
                         <a class="nav-link d-flex align-items-center" href="{% url 'about' %}">
                             <i data-lucide="info" class="me-2" style="width: 18px;"></i>About
                         </a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item me-lg-3">
                         <a class="nav-link d-flex align-items-center" href="{% url 'contact' %}">
                             <i data-lucide="phone-call" class="me-2" style="width: 18px;"></i>Contact
                         </a>
                     </li>
+
                     {% if user.is_authenticated %}
-                    <li class="nav-item ms-lg-3">
-                        <form action="{% url 'logout' %}" method="post" class="d-inline">
-                            {% csrf_token %}
-                            <button type="submit"
-                                class="btn btn-primary rounded-pill px-4 btn-sm fw-bold d-flex align-items-center">
-                                <i data-lucide="log-out" class="me-2" style="width: 16px;"></i>Logout
-                            </button>
-                        </form>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle btn btn-outline-light rounded-pill px-4 d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            {% if user.profile.profile_photo %}
+                                <img src="{{ user.profile.profile_photo.url }}" class="rounded-circle me-2" style="width: 24px; height: 24px; object-fit: cover;">
+                            {% else %}
+                                <i data-lucide="user" class="me-2" style="width: 18px;"></i>
+                            {% endif %}
+                            {{ user.username }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 mt-2" aria-labelledby="userDropdown" style="border-radius: 15px; overflow: hidden;">
+                            <li>
+                                <a class="dropdown-item py-2 d-flex align-items-center" href="{% url 'profile' %}">
+                                    <i data-lucide="user-circle" class="me-2 text-primary" style="width: 18px;"></i>My Profile
+                                </a>
+                            </li>
+                            {% if user.is_staff %}
+                            <li>
+                                <a class="dropdown-item py-2 d-flex align-items-center" href="{% url 'user_list' %}">
+                                    <i data-lucide="users" class="me-2 text-primary" style="width: 18px;"></i>Manage Users
+                                </a>
+                            </li>
+                            {% endif %}
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form action="{% url 'logout' %}" method="post" class="m-0">
+                                    {% csrf_token %}
+                                    <button type="submit" class="dropdown-item py-2 d-flex align-items-center text-danger">
+                                        <i data-lucide="log-out" class="me-2" style="width: 18px;"></i>Logout
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
                     </li>
                     {% else %}
                     <li class="nav-item">
-                        <a class="btn btn-primary rounded-pill px-4 fw-bold d-flex align-items-center"
-                            href="{% url 'login' %}">
+                        <a class="btn btn-primary rounded-pill px-4 fw-bold d-flex align-items-center" href="{% url 'login' %}">
                             <i data-lucide="log-in" class="me-2" style="width: 16px;"></i>Login
                         </a>
                     </li>

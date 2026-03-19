@@ -1,119 +1,128 @@
 {% extends 'hotel/base.html' %}
+{% load static %}
 
 {% block content %}
-<style>
-    .hotel-card {
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        border: none;
-        border-radius: 15px;
-        overflow: hidden;
-    }
-
-    .hotel-card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1) !important;
-    }
-
-    .hotel-card .card-img-top {
-        height: 200px;
-        object-fit: cover;
-    }
-
-    .hotel-card .card-body {
-        padding: 1.5rem;
-    }
-
-    .hotel-card .card-title {
-        font-weight: 700;
-        color: #2c3e50;
-    }
-
-    .stat-badge {
-        background: rgba(13, 110, 253, 0.1);
-        color: #0d6efd;
-        padding: 0.5rem 0.8rem;
-        border-radius: 10px;
-        font-size: 0.9rem;
-        font-weight: 600;
-    }
-</style>
-
-<div class="d-flex flex-column flex-sm-row justify-content-between align-items-center mb-4">
-    <h2 class="fw-bold mb-3 mb-sm-0">{% if user.is_staff %}Managed Hotels{% else %}All Hotels{% endif %}</h2>
+<div class="row mb-5 animate-fade-in">
+    <div class="col-lg-8">
+        <h1 class="display-5 fw-bold text-dark mb-2">{% if user.is_staff %}Managed Properties{% else %}Discover Luxury{% endif %}</h1>
+        <p class="text-muted lead">Experience world-class hospitality in our curated collection of premium hotels.</p>
+    </div>
     {% if user.is_staff %}
-    <a href="{% url 'hotel_add' %}" class="btn btn-primary px-4 py-2 rounded-pill shadow-sm d-flex align-items-center">
-        <i data-lucide="plus" class="me-2" style="width: 18px;"></i>Add New Hotel
-    </a>
+    <div class="col-lg-4 d-flex align-items-center justify-content-lg-end mt-3 mt-lg-0">
+        <a href="{% url 'hotel_add' %}" class="btn btn-gradient-primary rounded-pill px-4 py-3 shadow">
+            <i data-lucide="plus" class="me-2" style="width: 20px;"></i>Partner New Hotel
+        </a>
+    </div>
     {% endif %}
 </div>
 
-<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-5">
     {% for hotel in object_list %}
     <div class="col">
-        <div class="card h-100 shadow-sm hotel-card">
-            {% if hotel.image %}
-            <img src="{{ hotel.image.url }}" class="card-img-top" alt="{{ hotel.name }}">
-            {% else %}
-            <div class="card-img-top bg-light d-flex align-items-center justify-content-center border-bottom"
-                style="height: 200px;">
-                <i data-lucide="building-2" class="text-muted opacity-25" style="width: 64px; height: 64px;"></i>
-            </div>
-            {% endif %}
-
-            <div class="card-body d-flex flex-column">
-                <h4 class="card-title mb-2">{{ hotel.name }}</h4>
-                <div class="mb-2 text-warning" style="font-size: 0.9rem;">
-                    {% for i in "12345"|make_list %}
-                    {% if forloop.counter <= hotel.star_rating %} <i data-lucide="star"
-                        class="text-warning fill-warning" style="width: 14px; fill: currentColor;"></i>
-                        {% else %}
-                        <i data-lucide="star" class="text-muted opacity-50" style="width: 14px;"></i>
-                        {% endif %}
-                        {% endfor %}
+        <div class="card h-100 hotel-premium-card border-0 shadow-sm overflow-hidden position-relative">
+            <!-- Image Section with Overlay -->
+            <div class="position-relative overflow-hidden" style="height: 280px;">
+                {% if hotel.image %}
+                    <img src="{{ hotel.image.url }}" class="card-img-top h-100 w-100 object-fit-cover transition-transform" alt="{{ hotel.name }}">
+                {% else %}
+                    <div class="h-100 w-100 bg-light d-flex align-items-center justify-content-center">
+                        <i data-lucide="building-2" class="text-muted opacity-25" style="width: 80px; height: 80px;"></i>
+                    </div>
+                {% endif %}
+                
+                <!-- Floating Badges -->
+                <div class="position-absolute top-0 start-0 m-3 d-flex flex-column gap-2">
+                    <span class="badge glass-badge rounded-pill d-flex align-items-center py-2 px-3">
+                        <i data-lucide="map-pin" class="me-1 text-primary" style="width: 14px;"></i>
+                        {{ hotel.location }}
+                    </span>
                 </div>
-                <p class="text-muted mb-3 d-flex align-items-center">
-                    <i data-lucide="map-pin" class="me-2 text-primary" style="width: 16px;"></i>{{ hotel.location }}
+                
+                <div class="position-absolute bottom-0 start-0 m-3">
+                    <div class="star-rating glass-badge rounded-pill px-3 py-1">
+                        {% for i in "12345"|make_list %}
+                            {% if forloop.counter <= hotel.star_rating %}
+                                <i data-lucide="star" class="text-warning fill-warning" style="width: 14px; fill: currentColor;"></i>
+                            {% else %}
+                                <i data-lucide="star" class="text-white opacity-50" style="width: 14px;"></i>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <h3 class="fw-bold text-dark h4 mb-0">{{ hotel.name }}</h3>
+                    <span class="text-primary small fw-bold">{{ hotel.total_rooms }} Rooms</span>
+                </div>
+                
+                <p class="text-muted small mb-4 line-clamp-3">
+                    {{ hotel.description|default:"Experience unprecedented comfort and elegance in the heart of the city." }}
                 </p>
 
-                <div class="mt-auto">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <span class="stat-badge d-flex align-items-center">
-                            <i data-lucide="bed" class="me-2" style="width: 16px;"></i>{{ hotel.total_rooms }} Rooms
-                        </span>
-                        <span class="text-primary fw-bold small d-flex align-items-center">
-                            <i data-lucide="phone" class="me-1" style="width: 14px;"></i>{{ hotel.contact_info }}
-                        </span>
-                    </div>
-
-                    <div class="d-flex gap-2">
-                        <a href="{% url 'room_list' %}?hotel={{ hotel.id }}"
-                            class="btn btn-outline-primary w-100 rounded-pill d-flex align-items-center justify-content-center">
-                            <i data-lucide="eye" class="me-2" style="width: 16px;"></i>View Rooms
-                        </a>
-                        {% if user.is_staff %}
-                        <a href="{% url 'hotel_edit' hotel.pk %}"
-                            class="btn btn-outline-secondary w-100 rounded-pill d-flex align-items-center justify-content-center">
-                            <i data-lucide="edit-3" class="me-2" style="width: 16px;"></i>Edit
-                        </a>
-                        <a href="{% url 'hotel_delete' hotel.pk %}"
-                            class="btn btn-outline-danger w-100 rounded-pill d-flex align-items-center justify-content-center">
-                            <i data-lucide="trash-2" class="me-2" style="width: 16px;"></i>Delete
-                        </a>
-                        {% endif %}
-                    </div>
+                <div class="d-flex gap-2 mt-auto">
+                    <a href="{% url 'hotel_detail' hotel.pk %}" class="btn btn-primary rounded-pill flex-grow-1 py-2 fw-bold">
+                        Details
+                    </a>
+                    {% if user.is_staff %}
+                    <a href="{% url 'hotel_edit' hotel.pk %}" class="btn btn-outline-secondary rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 42px; height: 42px;" title="Edit">
+                        <i data-lucide="edit-3" style="width: 18px;"></i>
+                    </a>
+                    {% endif %}
                 </div>
             </div>
         </div>
     </div>
     {% empty %}
-    <div class="col-12 text-center py-5">
-        <div class="card border-0 bg-light py-5 rounded-4">
-            <i data-lucide="building-2" class="text-muted mx-auto mb-3"
-                style="width: 64px; height: 64px; opacity: 0.2;"></i>
-            <h3 class="text-muted">No hotels registered yet.</h3>
-            <p class="text-muted small">Start by adding your first hotel property.</p>
+    <div class="col-12">
+        <div class="card border-0 bg-white shadow-sm p-5 text-center" style="border-radius: 30px;">
+            <div class="icon-box icon-box-lg bg-light text-muted mx-auto mb-4">
+                <i data-lucide="building-2"></i>
+            </div>
+            <h2 class="fw-bold">No properties found.</h2>
+            <p class="text-muted">Start by registering your first luxury property today.</p>
         </div>
     </div>
     {% endfor %}
 </div>
+
+<style>
+    .hotel-premium-card {
+        border-radius: 25px;
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+    .hotel-premium-card:hover {
+        transform: translateY(-15px);
+        box-shadow: 0 30px 60px rgba(0,0,0,0.12) !important;
+    }
+    .hotel-premium-card:hover img {
+        transform: scale(1.1);
+    }
+    .glass-badge {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: #1a1c23;
+        font-weight: 600;
+        font-size: 0.8rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+    .line-clamp-3 {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;  
+        overflow: hidden;
+    }
+    .transition-transform {
+        transition: transform 0.6s ease;
+    }
+    .animate-fade-in {
+        animation: fadeInDown 0.8s ease-out;
+    }
+    @keyframes fadeInDown {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
 {% endblock %}

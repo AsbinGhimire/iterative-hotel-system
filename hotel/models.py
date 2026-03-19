@@ -20,6 +20,10 @@ class Hotel(models.Model):
     star_rating = models.IntegerField(choices=STAR_RATING_CHOICES, default=3)
     manager = models.ForeignKey(User, on_delete=models.CASCADE, related_name='hotels')
     image = models.ImageField(upload_to='hotels/', null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
+    amenities = models.CharField(max_length=500, help_text="Comma-separated list (e.g. WiFi, Pool, Gym)", null=True, blank=True)
+    website = models.URLField(null=True, blank=True)
+    email = models.EmailField(null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -36,6 +40,8 @@ class Room(models.Model):
     room_type = models.CharField(max_length=20, choices=ROOM_TYPES)
     price_per_night = models.DecimalField(max_digits=8, decimal_places=2)
     is_available = models.BooleanField(default=True)
+    description = models.TextField(null=True, blank=True)
+    size = models.IntegerField(help_text="Size in square meters (sqm)", null=True, blank=True)
 
     class Meta:
         unique_together = ('hotel', 'room_number')

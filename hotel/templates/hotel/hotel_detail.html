@@ -1,0 +1,169 @@
+{% extends 'hotel/base.html' %}
+
+{% block content %}
+<div class="animate-fade-in">
+    <!-- Hero Property Section -->
+    <div class="card border-0 shadow-lg overflow-hidden position-relative mb-5" style="border-radius: 40px; min-height: 500px;">
+        {% if hotel.image %}
+            <img src="{{ hotel.image.url }}" class="position-absolute h-100 w-100 object-fit-cover" alt="{{ hotel.name }}">
+        {% else %}
+            <div class="position-absolute h-100 w-100 bg-dark d-flex align-items-center justify-content-center">
+                <i data-lucide="hotel" class="text-white opacity-25" style="width: 120px; height: 120px;"></i>
+            </div>
+        {% endif %}
+        
+        <div class="position-absolute h-100 w-100" style="background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 60%, transparent 100%);"></div>
+        
+        <div class="position-relative h-100 container d-flex flex-column justify-content-end p-5 text-white" style="min-height: 500px;">
+            <div class="mb-3">
+                {% for i in "12345"|make_list %}
+                    {% if forloop.counter <= hotel.star_rating %}
+                        <i data-lucide="star" class="text-warning fill-warning me-1" style="width: 20px; fill: currentColor;"></i>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <h1 class="display-3 fw-bold mb-2">{{ hotel.name }}</h1>
+            <p class="lead mb-4 d-flex align-items-center opacity-75">
+                <i data-lucide="map-pin" class="me-2"></i>{{ hotel.location }}
+            </p>
+            
+            <div class="d-flex flex-wrap gap-3 mb-2">
+                <span class="badge glass-badge-white py-2 px-4 rounded-pill">
+                    <i data-lucide="bed" class="me-2"></i>{{ hotel.total_rooms }} Available Rooms
+                </span>
+                {% if hotel.website %}
+                <a href="{{ hotel.website }}" target="_blank" class="badge glass-badge-white py-2 px-4 rounded-pill text-decoration-none">
+                    <i data-lucide="globe" class="me-2"></i>Official Website
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-5">
+        <!-- Main Description -->
+        <div class="col-lg-8">
+            <div class="card border-0 bg-white shadow-sm p-4 p-lg-5 mb-5" style="border-radius: 30px;">
+                <h2 class="fw-bold mb-4">About this Property</h2>
+                <p class="text-muted lead" style="line-height: 1.8;">
+                    {{ hotel.description|default:"Discover a sanctuary of sophistication and comfort. Our property offers an unparalleled stay experience with meticulous attention to detail and world-class service." }}
+                </p>
+                
+                {% if amenity_list %}
+                <h4 class="fw-bold mt-5 mb-4">Key Amenities</h4>
+                <div class="row row-cols-2 row-cols-md-3 g-4">
+                    {% for amenity in amenity_list %}
+                    <div class="col d-flex align-items-center">
+                        <div class="icon-box icon-box-sm bg-primary bg-opacity-10 text-primary me-3">
+                            <i data-lucide="check" style="width: 16px;"></i>
+                        </div>
+                        <span class="fw-medium">{{ amenity }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Sidebar Contact Info -->
+        <div class="col-lg-4">
+            <div class="sticky-top" style="top: 100px;">
+                <div class="card border-0 bg-primary text-white p-4 shadow-lg mb-4" style="border-radius: 30px;">
+                    <h4 class="fw-bold mb-4">Contact Property</h4>
+                    <div class="mb-4">
+                        <label class="small text-white opacity-75 d-block mb-1">Direct Line</label>
+                        <div class="fs-5 fw-bold"><i data-lucide="phone" class="me-2" style="width: 20px;"></i>{{ hotel.contact_info }}</div>
+                    </div>
+                    {% if hotel.email %}
+                    <div class="mb-4">
+                        <label class="small text-white opacity-75 d-block mb-1">Email Address</label>
+                        <div class="fw-medium"><i data-lucide="mail" class="me-2" style="width: 18px;"></i>{{ hotel.email }}</div>
+                    </div>
+                    {% endif %}
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'booking_add' %}?hotel={{ hotel.id }}" class="btn btn-light rounded-pill py-3 fw-bold text-primary">Reserve Now</a>
+                    </div>
+                </div>
+
+                {% if user.is_staff %}
+                <div class="card border-0 bg-white shadow-sm p-4" style="border-radius: 30px;">
+                    <h5 class="fw-bold mb-3">Staff Management</h5>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'hotel_edit' hotel.pk %}" class="btn btn-outline-secondary rounded-pill d-flex align-items-center justify-content-center">
+                            <i data-lucide="edit-3" class="me-2" style="width: 18px;"></i>Edit Details
+                        </a>
+                        <a href="{% url 'hotel_delete' hotel.pk %}" class="btn btn-outline-danger rounded-pill d-flex align-items-center justify-content-center">
+                            <i data-lucide="trash-2" class="me-2" style="width: 18px;"></i>Remove Property
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div> <!-- End of first row -->
+
+    <!-- New Full-Width Row for Rooms (Image-Free Version) -->
+    <div class="row mt-5">
+        <div class="col-12 py-4">
+            <div class="d-flex justify-content-between align-items-center mb-4 ps-2 border-bottom pb-3">
+                <h3 class="fw-bold mb-0">Discover Accommodations</h3>
+                <a href="{% url 'room_list' %}?hotel={{ hotel.id }}" class="btn btn-link text-primary fw-bold text-decoration-none p-0">View All Detailed Rooms <i data-lucide="arrow-right" class="ms-1" style="width: 18px;"></i></a>
+            </div>
+            
+            <div class="row g-4 mb-5">
+                {% for room in hotel.rooms.all|slice:":8" %}
+                <div class="col-md-6 col-lg-3">
+                    <div class="card border-0 shadow-sm overflow-hidden h-100" style="border-radius: 20px;">
+                        <div class="card-body p-4 d-flex flex-column">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="fw-bold mb-0 text-dark">Room {{ room.room_number }}</h5>
+                                <span class="badge {% if room.is_available %}bg-success{% else %}bg-danger{% endif %} bg-opacity-10 {% if room.is_available %}text-success{% else %}text-danger{% endif %} border rounded-pill px-3 py-1 fw-bold" style="font-size: 0.7rem;">
+                                    {% if room.is_available %}Available{% else %}Occupied{% endif %}
+                                </span>
+                            </div>
+                            
+                            <div class="d-flex flex-wrap gap-2 mb-4">
+                                <span class="badge bg-light text-muted border rounded-pill px-3 py-1 text-uppercase fw-bold" style="font-size: 0.6rem; letter-spacing: 0.5px;">
+                                    {{ room.room_type }}
+                                </span>
+                                <span class="badge bg-light text-muted border rounded-pill px-3 py-1 d-flex align-items-center" style="font-size: 0.6rem;">
+                                    <i data-lucide="maximize" class="me-1" style="width: 10px;"></i>
+                                    {{ room.size|default:"30" }} sqm
+                                </span>
+                            </div>
+
+                            <p class="text-muted mb-4 flex-grow-1" style="font-size: 0.8rem; min-height: 2.4rem;">
+                                {{ room.description|default:"Refined living in our meticulously designed luxury suites."|truncatechars:120 }}
+                            </p>
+                            
+                            <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                                <span class="fs-5 fw-bold text-primary">${{ room.price_per_night }}<small class="text-muted fw-normal" style="font-size: 0.75rem;">/nt</small></span>
+                                <a href="{% url 'booking_add' %}?room={{ room.id }}" class="btn btn-primary rounded-pill px-4 btn-sm fw-bold">Reserve</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12 text-center py-5 text-muted bg-light rounded-4">No rooms currently listed for this property.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .glass-badge-white {
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: white;
+    }
+    .animate-fade-in {
+        animation: fadeInUp 0.8s ease-out;
+    }
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+{% endblock %}

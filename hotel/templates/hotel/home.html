@@ -46,12 +46,6 @@
     <a href="{% url 'login' %}" class="btn btn-light btn-lg px-5 rounded-pill fw-bold">Get Started</a>
     {% else %}
     <div class="d-flex flex-column flex-sm-row justify-content-center gap-3 px-4">
-        {% if user.is_staff %}
-        <a href="{% url 'hotel_add' %}"
-            class="btn btn-light btn-lg px-4 rounded-pill fw-bold d-flex align-items-center justify-content-center">
-            <i data-lucide="plus" class="me-2" style="width: 20px;"></i>Add Hotel
-        </a>
-        {% endif %}
         <a href="{% url 'booking_add' %}"
             class="btn btn-outline-light btn-lg px-4 rounded-pill fw-bold d-flex align-items-center justify-content-center">
             <i data-lucide="calendar-plus" class="me-2" style="width: 20px;"></i>New Booking

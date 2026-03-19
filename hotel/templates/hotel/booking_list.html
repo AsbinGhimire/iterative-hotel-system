@@ -1,107 +1,145 @@
 {% extends 'hotel/base.html' %}
 
 {% block content %}
-<div class="d-flex flex-column flex-sm-row justify-content-between align-items-center mb-4">
-    <h2 class="fw-bold mb-3 mb-sm-0">{% if user.is_staff %}All Active Bookings{% else %}My Bookings{% endif %}</h2>
-    <a href="{% url 'booking_add' %}"
-        class="btn btn-primary px-4 py-2 rounded-pill shadow-sm d-flex align-items-center">
-        <i data-lucide="calendar-plus" class="me-2" style="width: 18px;"></i>New Booking
+<!-- Premium Dashboard Summary -->
+<div class="row g-4 mb-5 animate-fade-in">
+    <div class="col-6 col-lg-3">
+        <div class="card border-0 shadow-sm p-4 text-center h-100" style="border-radius: 25px;">
+            <div class="icon-box bg-primary bg-opacity-10 text-primary mx-auto mb-3 shadow-sm">
+                <i data-lucide="calendar"></i>
+            </div>
+            <h3 class="fw-bold mb-0">{{ stats.total }}</h3>
+            <p class="text-muted small mb-0">Total Reservations</p>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card border-0 shadow-sm p-4 text-center h-100" style="border-radius: 25px;">
+            <div class="icon-box bg-success bg-opacity-10 text-success mx-auto mb-3 shadow-sm">
+                <i data-lucide="activity"></i>
+            </div>
+            <h3 class="fw-bold mb-0">{{ stats.active }}</h3>
+            <p class="text-muted small mb-0">Active Stays</p>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card border-0 shadow-sm p-4 text-center h-100" style="border-radius: 25px;">
+            <div class="icon-box bg-info bg-opacity-10 text-info mx-auto mb-3 shadow-sm">
+                <i data-lucide="check-circle-2"></i>
+            </div>
+            <h3 class="fw-bold mb-0">{{ stats.completed }}</h3>
+            <p class="text-muted small mb-0">Completed</p>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card border-0 shadow-sm p-4 text-center h-100" style="border-radius: 25px;">
+            <div class="icon-box bg-danger bg-opacity-10 text-danger mx-auto mb-3 shadow-sm">
+                <i data-lucide="alert-circle"></i>
+            </div>
+            <h3 class="fw-bold mb-0">{{ stats.cancelled }}</h3>
+            <p class="text-muted small mb-0">Cancelled</p>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex flex-column flex-sm-row justify-content-between align-items-center mb-4 ps-2">
+    <div>
+        <h2 class="fw-bold mb-1">{% if user.is_staff %}Managed Reservations{% else %}My Reservations{% endif %}</h2>
+        <p class="text-muted small mb-0">Manage guest stays and view historical records.</p>
+    </div>
+    <a href="{% url 'booking_add' %}" class="btn btn-gradient-primary rounded-pill px-4 py-3 shadow mt-3 mt-sm-0">
+        <i data-lucide="calendar-plus" class="me-2" style="width: 20px;"></i>Create Reservation
     </a>
 </div>
 
-<div class="card border-0 shadow-sm rounded-4">
+<!-- Premium Table Design -->
+<div class="card border-0 shadow-sm mb-5" style="border-radius: 30px; overflow: hidden;">
     <div class="card-body p-0">
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
                 <thead class="bg-light">
-                    <tr>
-                        <th class="ps-4 py-3">Name</th>
-                        <th class="py-3">Room</th>
-                        <th class="py-3">Check-in</th>
-                        <th class="py-3">Check-out</th>
-                        <th class="py-3 text-center">Status</th>
-                        <th class="py-3 text-end pe-4">Action</th>
+                    <tr class="border-bottom-0">
+                        <th class="ps-4 py-4 text-uppercase small letter-spacing-1 fw-bold text-muted">Guest Detail</th>
+                        <th class="py-4 text-uppercase small letter-spacing-1 fw-bold text-muted">Accommodations</th>
+                        <th class="py-4 text-uppercase small letter-spacing-1 fw-bold text-muted">Period</th>
+                        <th class="py-4 text-uppercase small letter-spacing-1 fw-bold text-muted text-center">Status</th>
+                        <th class="py-4 text-uppercase small letter-spacing-1 fw-bold text-muted text-end pe-4">Management</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for booking in object_list %}
-                    <tr>
-                        <td class="ps-4 fw-bold">{{ booking.customer }}</td>
-                        <td class="text-primary">{{ booking.room }}</td>
-                        <td class="small">{{ booking.check_in|date:"M d, Y" }}</td>
-                        <td class="small">{{ booking.check_out|date:"M d, Y" }}</td>
-                        <td class="text-center">
+                    {% for booking in bookings %}
+                    <tr class="border-bottom border-light">
+                        <td class="ps-4 py-4">
+                            <div class="d-flex align-items-center">
+                                <div class="avatar-sm rounded-circle bg-primary bg-opacity-10 text-primary d-flex align-items-center justify-content-center fw-bold me-3">
+                                    {{ booking.customer|slice:":1"|upper }}
+                                </div>
+                                <div>
+                                    <div class="fw-bold text-dark">{{ booking.customer }}</div>
+                                    <div class="small text-muted">ID: #BK-{{ booking.id }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="py-4">
+                            <div class="fw-medium text-dark">{{ booking.room.room_type }}</div>
+                            <div class="small text-muted">{{ booking.room.hotel.name }} - #{{ booking.room.room_number }}</div>
+                        </td>
+                        <td class="py-4">
+                            <div class="d-flex align-items-center mb-1">
+                                <i data-lucide="arrow-right-circle" class="text-success me-2" style="width: 14px;"></i>
+                                <span class="small fw-medium">{{ booking.check_in|date:"M d, Y" }}</span>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <i data-lucide="arrow-left-circle" class="text-danger me-2" style="width: 14px;"></i>
+                                <span class="small fw-medium">{{ booking.check_out|date:"M d, Y" }}</span>
+                            </div>
+                        </td>
+                        <td class="py-4 text-center">
                             {% if booking.status == 'Booked' %}
-                            <span
-                                class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 rounded-pill px-3">Booked</span>
+                                <span class="badge badge-glow bg-primary rounded-pill px-3 py-2">Booked</span>
                             {% elif booking.status == 'Checked-In' %}
-                            <span
-                                class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-3">In
-                                Progress</span>
+                                <span class="badge badge-glow bg-success rounded-pill px-3 py-2">In Progress</span>
                             {% elif booking.status == 'Checked-Out' %}
-                            <span
-                                class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25 rounded-pill px-3">Completed</span>
+                                <span class="badge badge-glow bg-secondary rounded-pill px-3 py-2">Completed</span>
                             {% elif booking.status == 'Cancelled' %}
-                            <span
-                                class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 rounded-pill px-3">Cancelled</span>
+                                <span class="badge badge-glow bg-danger rounded-pill px-3 py-2">Cancelled</span>
                             {% else %}
-                            <span
-                                class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-25 rounded-pill px-3">{{
-                                booking.get_status_display }}</span>
+                                <span class="badge badge-glow bg-info rounded-pill px-3 py-2">{{ booking.status }}</span>
                             {% endif %}
                         </td>
-                        <td class="text-end pe-4">
-                            <div class="d-flex justify-content-end gap-2">
+                        <td class="py-4 text-end pe-4">
+                            <div class="d-flex justify-content-end gap-2 flex-wrap">
                                 {% if user.is_staff %}
-                                {% if booking.status == 'Booked' %}
-                                <a href="{% url 'update_booking_status' booking.id 'Checked-In' %}"
-                                    class="btn btn-sm btn-success rounded-pill px-3 d-flex align-items-center"
-                                    title="Check In Guest">
-                                    <i data-lucide="log-in" class="me-1" style="width: 14px;"></i>Check In
-                                </a>
-                                <a href="{% url 'update_booking_status' booking.id 'Cancelled' %}"
-                                    class="btn btn-sm btn-outline-warning rounded-pill px-3 d-flex align-items-center"
-                                    title="Cancel Booking">
-                                    <i data-lucide="x-circle" class="me-1" style="width: 14px;"></i>Cancel
-                                </a>
-                                {% elif booking.status == 'Checked-In' %}
-                                <a href="{% url 'update_booking_status' booking.id 'Checked-Out' %}"
-                                    class="btn btn-sm btn-info rounded-pill px-3 text-white d-flex align-items-center"
-                                    title="Check Out Guest">
-                                    <i data-lucide="log-out" class="me-1" style="width: 14px;"></i>Check Out
-                                </a>
-                                {% endif %}
+                                    {% if booking.status == 'Booked' %}
+                                        <a href="{% url 'update_booking_status' booking.id 'Checked-In' %}" class="btn btn-sm btn-success rounded-pill px-3 d-flex align-items-center" title="Check-In">
+                                            <i data-lucide="log-in" class="me-1" style="width: 14px;"></i>Check-In
+                                        </a>
+                                        <a href="{% url 'update_booking_status' booking.id 'Cancelled' %}" class="btn btn-sm btn-outline-warning rounded-pill px-3 d-flex align-items-center" title="Cancel">
+                                            <i data-lucide="ban" class="me-1" style="width: 14px;"></i>Cancel
+                                        </a>
+                                    {% elif booking.status == 'Checked-In' %}
+                                        <a href="{% url 'update_booking_status' booking.id 'Checked-Out' %}" class="btn btn-sm btn-info rounded-pill px-3 text-white d-flex align-items-center" title="Check-Out">
+                                            <i data-lucide="log-out" class="me-1" style="width: 14px;"></i>Check-Out
+                                        </a>
+                                    {% endif %}
                                 {% endif %}
 
-                                <a href="{% url 'booking_edit' booking.id %}"
-                                    class="btn btn-sm btn-light rounded-pill px-3 border border-light-subtle d-flex align-items-center"
-                                    title="Edit Booking">
-                                    <i data-lucide="edit-3" style="width: 14px;"></i>
+                                <a href="{% url 'booking_bill' booking.id %}" class="btn btn-sm btn-outline-primary rounded-pill px-3 d-flex align-items-center" title="View Bill">
+                                    <i data-lucide="receipt" class="me-1" style="width: 14px;"></i>Bill
                                 </a>
-
-                                <a href="{% url 'booking_bill' booking.id %}"
-                                    class="btn btn-sm btn-outline-primary rounded-pill px-3 d-flex align-items-center"
-                                    title="View Bill">
-                                    <i data-lucide="file-text" style="width: 14px;" class="me-1"></i>Bill
+                                
+                                <a href="{% url 'booking_edit' booking.id %}" class="btn btn-sm btn-light rounded-pill px-3 d-flex align-items-center" title="Edit">
+                                    <i data-lucide="edit-3" class="me-1" style="width: 14px;"></i>Edit
                                 </a>
-
-                                {% if user.is_staff and booking.status == 'Cancelled' %}
-                                <a href="{% url 'booking_delete' booking.id %}"
-                                    class="btn btn-sm btn-outline-danger rounded-pill px-3 d-flex align-items-center"
-                                    title="Delete Record">
-                                    <i data-lucide="trash-2" style="width: 14px;"></i>
-                                </a>
-                                {% endif %}
                             </div>
                         </td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="6" class="text-center py-5">
-                            <div class="text-muted">
-                                <i data-lucide="calendar-x" class="mx-auto mb-3 d-block opacity-25"
-                                    style="width: 64px; height: 64px;"></i>
-                                <p>No active bookings. Start by registering a guest!</p>
+                        <td colspan="5" class="py-5 text-center">
+                            <div class="py-5">
+                                <i data-lucide="calendar-off" class="text-muted opacity-25 mx-auto mb-3" style="width: 80px; height: 80px;"></i>
+                                <h4 class="text-muted fw-bold">No reservations found.</h4>
+                                <p class="text-muted mb-0">Your future stays will appear here.</p>
                             </div>
                         </td>
                     </tr>
@@ -111,4 +149,38 @@
         </div>
     </div>
 </div>
+
+<style>
+    .letter-spacing-1 { letter-spacing: 0.1rem; }
+    .badge-glow {
+        box-shadow: 0 0 15px rgba(var(--bs-primary-rgb), 0.2);
+    }
+    .bg-success.badge-glow { box-shadow: 0 0 15px rgba(var(--bs-success-rgb), 0.2); }
+    .bg-danger.badge-glow { box-shadow: 0 0 15px rgba(var(--bs-danger-rgb), 0.2); }
+    
+    .btn-action {
+        width: 38px;
+        height: 38px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        transition: all 0.2s ease;
+    }
+    .btn-action:hover {
+        transform: scale(1.1);
+    }
+    .avatar-sm {
+        width: 42px;
+        height: 42px;
+    }
+    .animate-fade-in {
+        animation: fadeIn 0.8s ease-out;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
 {% endblock %}

@@ -5,16 +5,18 @@
 <div class="row justify-content-center">
     <div class="col-lg-6">
         <div class="form-card">
-            <div class="form-header">
-                <h4 class="mb-1 fw-bold text-dark">
-                    <i class="bi bi-door-closed me-2 text-primary"></i>
-                    {% if object %}Edit Room{% else %}Add Room{% endif %}
-                </h4>
-                <p class="text-muted small mb-0">Configure room details</p>
+            <div class="form-header bg-primary bg-opacity-10 py-4 px-4 text-center" style="border-bottom: 2px solid rgba(0,0,0,0.05);">
+                <div class="icon-box icon-box-lg bg-primary text-white mx-auto mb-3 shadow">
+                    <i data-lucide="door-open"></i>
+                </div>
+                <h3 class="fw-bold text-dark mb-1">
+                    {% if object %}Modify Accommodation{% else %}Register Luxury Room{% endif %}
+                </h3>
+                <p class="text-muted small">Define the standards of refined living</p>
             </div>
 
             <div class="p-4">
-                <form method="post">
+                <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
 
                     {% if form.non_field_errors %}

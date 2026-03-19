@@ -1,42 +1,103 @@
 {% extends 'hotel/base.html' %}
+{% load static %}
 
-{% block title %}Login - Hotel Information Management System{% endblock %}
+{% block title %}Sign In - Hotel IMS Luxury experience{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center mt-5">
-    <div class="col-md-4">
-        <div class="card shadow">
-            <div class="card-header bg-primary text-white text-center">
-                <h3>Login</h3>
+<div class="login-page-container d-flex align-items-center justify-content-center animate-fade-in" style="min-height: 80vh;">
+    <div class="col-md-5 col-lg-4">
+        <div class="card login-card border-0 shadow-lg overflow-hidden" style="border-radius: 35px;">
+            <div class="card-header bg-dark p-5 text-center position-relative overflow-hidden border-0">
+                <div class="position-absolute top-0 start-0 w-100 h-100 bg-gradient-primary opacity-75"></div>
+                <div class="position-relative z-index-1">
+                    <div class="icon-box icon-box-lg bg-white bg-opacity-20 text-white mx-auto mb-3 shadow-sm border border-white border-opacity-25 rounded-circle d-flex align-items-center justify-content-center" style="width: 70px; height: 70px;">
+                        <i data-lucide="shield-check" style="width: 35px; height: 35px;"></i>
+                    </div>
+                    <h2 class="text-white fw-bold mb-1">Welcome Back</h2>
+                    <p class="text-white text-opacity-75 small mb-0">Experience institutional excellence</p>
+                </div>
             </div>
-            <div class="card-body">
+            
+            <div class="card-body p-5 bg-white">
                 {% if form.errors %}
-                <div class="alert alert-danger">
-                    Your username and password didn't match. Please try again.
+                <div class="alert alert-danger border-0 rounded-4 px-4 py-3 mb-4 animate-shake" role="alert">
+                    <div class="d-flex align-items-center">
+                        <i data-lucide="alert-triangle" class="me-3" style="width: 20px;"></i>
+                        <span class="small fw-medium">Invalid credentials. Please try again.</span>
+                    </div>
                 </div>
                 {% endif %}
 
-                <form method="post" action="{% url 'login' %}">
+                <form method="post" action="{% url 'login' %}" class="needs-validation">
                     {% csrf_token %}
-                    <div class="mb-3">
-                        <label for="id_username" class="form-label">Username:</label>
-                        <input type="text" name="username" autofocus maxlength="150" required id="id_username"
-                            class="form-control">
+                    
+                    <div class="mb-4">
+                        <label for="id_username" class="form-label small fw-bold text-uppercase letter-spacing-1 text-muted">Username</label>
+                        <div class="input-group input-group-lg overflow-hidden rounded-pill border">
+                            <span class="input-group-text bg-light border-0 px-3">
+                                <i data-lucide="user" class="text-muted" style="width: 18px;"></i>
+                            </span>
+                            <input type="text" name="username" autofocus maxlength="150" required id="id_username" 
+                                   class="form-control border-0 bg-light px-2 py-3 shadow-none" placeholder="Enter username">
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="id_password" class="form-label">Password:</label>
-                        <input type="password" name="password" required id="id_password" class="form-control">
+
+                    <div class="mb-5">
+                        <div class="d-flex justify-content-between">
+                            <label for="id_password" class="form-label small fw-bold text-uppercase letter-spacing-1 text-muted">Password</label>
+                        </div>
+                        <div class="input-group input-group-lg overflow-hidden rounded-pill border">
+                            <span class="input-group-text bg-light border-0 px-3">
+                                <i data-lucide="lock" class="text-muted" style="width: 18px;"></i>
+                            </span>
+                            <input type="password" name="password" required id="id_password" 
+                                   class="form-control border-0 bg-light px-2 py-3 shadow-none" placeholder="••••••••">
+                        </div>
                     </div>
-                    <div class="d-grid mb-3">
-                        <button type="submit" class="btn btn-primary">Login</button>
+
+                    <div class="d-grid gap-3">
+                        <button type="submit" class="btn btn-primary rounded-pill py-3 fw-bold shadow-lg transition-transform hover-lift">
+                            Sign In to Dashboard
+                        </button>
+                        <input type="hidden" name="next" value="{{ next }}">
                     </div>
-                    <input type="hidden" name="next" value="{{ next }}">
                 </form>
             </div>
-            <div class="card-footer text-center">
-                <p>Default admin user: <b>admin/admin</b> (if created)</p>
+            
+            <div class="card-footer bg-light p-4 text-center border-0">
+                <p class="text-muted small mb-0">System secured by industrial-grade encryption.</p>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, var(--primary-color) 0%, #2563eb 100%);
+    }
+    .z-index-1 { z-index: 1; }
+    .letter-spacing-1 { letter-spacing: 0.05rem; }
+    .animate-fade-in {
+        animation: fadeIn 0.8s ease-out;
+    }
+    .animate-shake {
+        animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes shake {
+        10%, 90% { transform: translate3d(-1px, 0, 0); }
+        20%, 80% { transform: translate3d(2px, 0, 0); }
+        30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+        40%, 60% { transform: translate3d(4px, 0, 0); }
+    }
+    .hover-lift:hover {
+        transform: translateY(-2px);
+    }
+    .login-card {
+        transition: transform 0.3s ease;
+    }
+</style>
 {% endblock %}

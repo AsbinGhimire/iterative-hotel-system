@@ -37,6 +37,11 @@
                     <a href="{% url 'booking_add' %}" class="btn btn-outline-primary rounded-pill">
                         <i data-lucide="plus" class="me-2" style="width: 16px;"></i>New Booking
                     </a>
+                    {% if request.user.is_staff %}
+                    <a href="{% url 'user_list' %}" class="btn btn-outline-danger rounded-pill">
+                        <i data-lucide="users" class="me-2" style="width: 16px;"></i>Manage Users
+                    </a>
+                    {% endif %}
                 </div>
             </div>
         </div>
