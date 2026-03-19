@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
-from .models import Room, Hotel, Booking
-from .forms import BookingForm
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
+from .models import Room, Hotel, Booking, Profile
+from .forms import BookingForm, ProfileUpdateForm
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
@@ -204,3 +204,25 @@ def booking_bill(request, pk):
         'total_amount': total_amount,
     }
     return render(request, 'hotel/bill.html', context)
+
+class ProfileView(LoginRequiredMixin, DetailView):
+    model = Profile
+    template_name = 'hotel/profile.html'
+    context_object_name = 'profile'
+
+    def get_object(self):
+        return self.request.user.profile
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['bookings'] = Booking.objects.filter(user=self.request.user).order_by('-check_in')
+        return context
+
+class ProfileUpdateView(LoginRequiredMixin, UpdateView):
+    model = Profile
+    form_class = ProfileUpdateForm
+    template_name = 'hotel/profile_form.html'
+    success_url = reverse_lazy('profile')
+
+    def get_object(self):
+        return self.request.user.profile

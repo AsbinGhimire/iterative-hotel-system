@@ -1,5 +1,5 @@
 from django import forms
-from .models import Booking, Hotel, Room
+from .models import Booking, Hotel, Room, Profile
 
 class BookingForm(forms.ModelForm):
     class Meta:
@@ -20,3 +20,8 @@ class BookingForm(forms.ModelForm):
             else:
                 self.fields['hotel'].queryset = Hotel.objects.all()
                 self.fields['room'].queryset = Room.objects.filter(is_available=True)
+
+class ProfileUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['profile_photo']

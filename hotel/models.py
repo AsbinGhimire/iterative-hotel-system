@@ -125,8 +125,37 @@ class Payment(models.Model):
         return f"Payment for {self.booking}"
 
 
-from django.db.models.signals import post_delete
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    profile_photo = models.ImageField(upload_to='profiles/', null=True, blank=True)
+    loyalty_points = models.PositiveIntegerField(default=0)
+
+    def __str__(self):
+        return f"Profile of {self.user.username}"
+
+
+from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
+
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    instance.profile.save()
+
+@receiver(post_save, sender=Booking)
+def award_loyalty_points(sender, instance, **kwargs):
+    """Award 10 points per night when a booking is checked out."""
+    if instance.status == 'Checked-Out':
+        nights = (instance.check_out - instance.check_in).days
+        if nights < 1: nights = 1
+        points = nights * 10
+        profile = instance.user.profile
+        profile.loyalty_points += points
+        profile.save()
 
 @receiver(post_delete, sender=Booking)
 def update_room_status_on_delete(sender, instance, **kwargs):

@@ -1,0 +1,122 @@
+{% extends 'hotel/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="row g-4 animate-fade-in">
+    <!-- Profile Card -->
+    <div class="col-lg-4">
+        <div class="card form-card shadow-lg border-0 h-100">
+            <div class="card-body text-center p-5">
+                <div class="position-relative d-inline-block mb-4">
+                    {% if profile.profile_photo %}
+                        <img src="{{ profile.profile_photo.url }}" alt="Profile Photo" class="rounded-circle img-thumbnail shadow-sm" style="width: 150px; height: 150px; object-fit: cover;">
+                    {% else %}
+                        <div class="rounded-circle bg-light d-flex align-items-center justify-content-center border shadow-sm mx-auto" style="width: 150px; height: 150px;">
+                            <i data-lucide="user" class="text-muted" style="width: 64px; height: 64px;"></i>
+                        </div>
+                    {% endif %}
+                    <a href="{% url 'profile_edit' %}" class="btn btn-primary btn-sm rounded-circle position-absolute bottom-0 end-0 shadow" title="Edit Photo">
+                        <i data-lucide="camera" style="width: 16px; height: 16px;"></i>
+                    </a>
+                </div>
+                <h3 class="fw-bold mb-1">{{ request.user.get_full_name|default:request.user.username }}</h3>
+                <p class="text-muted mb-4">{{ request.user.email }}</p>
+
+                <!-- Loyalty Points Badge -->
+                <div class="bg-primary bg-opacity-10 rounded-pill p-3 border border-primary border-opacity-25 d-inline-flex align-items-center mb-4">
+                    <div class="icon-box icon-box-sm bg-primary text-white me-2">
+                        <i data-lucide="award" style="width: 18px;"></i>
+                    </div>
+                    <div>
+                        <span class="fw-bold text-primary">{{ profile.loyalty_points }}</span>
+                        <span class="text-primary small ms-1">Loyalty Points</span>
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2 mt-2">
+                    <a href="{% url 'booking_add' %}" class="btn btn-outline-primary rounded-pill">
+                        <i data-lucide="plus" class="me-2" style="width: 16px;"></i>New Booking
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Booking History -->
+    <div class="col-lg-8">
+        <div class="card form-card shadow-lg border-0 h-100">
+            <div class="form-header bg-white p-4">
+                <h4 class="fw-bold mb-0 d-flex align-items-center">
+                    <i data-lucide="history" class="text-primary me-2"></i>My Booking History
+                </h4>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="ps-4">Hotel & Room</th>
+                                <th>Check In</th>
+                                <th>Check Out</th>
+                                <th>Status</th>
+                                <th class="text-end pe-4">Invoice</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for booking in bookings %}
+                            <tr>
+                                <td class="ps-4">
+                                    <div class="fw-bold">{{ booking.hotel.name }}</div>
+                                    <div class="small text-muted">{{ booking.room.room_type }} - {{ booking.room.room_number }}</div>
+                                </td>
+                                <td>{{ booking.check_in }}</td>
+                                <td>{{ booking.check_out }}</td>
+                                <td>
+                                    <span class="badge rounded-pill 
+                                        {% if booking.status == 'Booked' %}bg-primary
+                                        {% elif booking.status == 'Checked-In' %}bg-success
+                                        {% elif booking.status == 'Checked-Out' %}bg-secondary
+                                        {% elif booking.status == 'Cancelled' %}bg-danger
+                                        {% endif %}">
+                                        {{ booking.status }}
+                                    </span>
+                                </td>
+                                <td class="text-end pe-4">
+                                    <a href="{% url 'booking_bill' booking.pk %}" class="btn btn-light btn-sm rounded-pill hover-lift">
+                                        <i data-lucide="file-text" class="text-primary" style="width: 16px;"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center py-5">
+                                    <div class="text-muted mb-3">
+                                        <i data-lucide="calendar-x" style="width: 48px; height: 48px;"></i>
+                                    </div>
+                                    <p>You haven't made any bookings yet.</p>
+                                    <a href="{% url 'room_list' %}" class="btn btn-primary btn-sm rounded-pill">Book Now</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .animate-fade-in {
+        animation: fadeIn 0.5s ease-out;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .hover-lift:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+</style>
+{% endblock %}
