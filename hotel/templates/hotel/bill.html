@@ -100,9 +100,7 @@
                 <div class="row mb-5">
                     <div class="col-sm-6">
                         <h6 class="text-uppercase text-muted fw-bold mb-3" style="letter-spacing: 1px;">Billed To:</h6>
-                        <h5 class="fw-bold mb-1">{{ booking.customer.name }}</h5>
-                        <p class="text-muted mb-1 d-flex align-items-center"><i data-lucide="phone" style="width: 14px;" class="me-2"></i>{{ booking.customer.phone }}</p>
-                        <p class="text-muted mb-0 d-flex align-items-center"><i data-lucide="map-pin" style="width: 14px;" class="me-2"></i>{{ booking.customer.address|default:"N/A" }}</p>
+                        <h5 class="fw-bold mb-1">{{ booking.customer }}</h5>
                     </div>
                     <div class="col-sm-6 text-sm-end mt-4 mt-sm-0">
                         <h6 class="text-uppercase text-muted fw-bold mb-3" style="letter-spacing: 1px;">Booking Details:</h6>

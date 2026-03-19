@@ -68,7 +68,7 @@ class Booking(models.Model):
     ]
 
     hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE, related_name='bookings')
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    customer = models.CharField(max_length=150)
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
     check_in = models.DateField()
     check_out = models.DateField()

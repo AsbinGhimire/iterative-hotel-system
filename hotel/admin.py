@@ -22,10 +22,10 @@ class CustomerAdmin(admin.ModelAdmin):
 class BookingAdmin(admin.ModelAdmin):
     list_display = ('customer', 'hotel', 'room', 'check_in', 'check_out', 'status')
     list_filter = ('status', 'hotel', 'check_in')
-    search_fields = ('customer__name', 'room__room_number', 'hotel__name')
+    search_fields = ('customer', 'room__room_number', 'hotel__name')
 
 @admin.register(Payment)
 class PaymentAdmin(admin.ModelAdmin):
     list_display = ('booking', 'amount', 'payment_date', 'payment_method')
     list_filter = ('payment_date', 'payment_method')
-    search_fields = ('booking__customer__name',)
+    search_fields = ('booking__customer',)
