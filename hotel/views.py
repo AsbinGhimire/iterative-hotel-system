@@ -6,9 +6,11 @@ from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import User
 
-
-
 def home(request):
+    """
+    Main landing page view.
+    Displays dashboard statistics for authenticated users (Staff vs Regular).
+    """
     if request.user.is_authenticated:
         if request.user.is_staff:
             hotels = Hotel.objects.all()
@@ -17,8 +19,7 @@ def home(request):
         else:
             hotels = Hotel.objects.all()
             room_count = Room.objects.count()
-            # We will show all hotels for regular users to book.
-            booking_count = Booking.objects.filter(user=request.user).count() # simplistic link
+            booking_count = Booking.objects.filter(user=request.user).count()
             
         hotel_count = hotels.count()
         latest_hotels = hotels.order_by('-id')[:3]
@@ -34,17 +35,22 @@ def home(request):
     return render(request, 'hotel/home.html', context)
 
 def about(request):
+    """Renders the static About Us page."""
     return render(request, 'hotel/about.html')
 
 def contact(request):
+    """Renders the static Contact Us page."""
     return render(request, 'hotel/contact.html')
 
 class AdminRequiredMixin(UserPassesTestMixin):
+    """Mixin to restrict view access to staff members only."""
     def test_func(self):
         return self.request.user.is_staff
 
-# Hotel CRUD Views
+# --- Hotel Management Views ---
+
 class HotelListView(LoginRequiredMixin, ListView):
+    """Displays a list of all hotels available in the system."""
     model = Hotel
     template_name = 'hotel/hotel_list.html'
     
@@ -52,6 +58,7 @@ class HotelListView(LoginRequiredMixin, ListView):
         return Hotel.objects.all()
 
 class HotelCreateView(LoginRequiredMixin, AdminRequiredMixin, CreateView):
+    """Allows staff to add a new hotel. Automatically sets the manager to the current user."""
     model = Hotel
     form_class = HotelForm
     success_url = reverse_lazy('hotel_list')
@@ -62,6 +69,7 @@ class HotelCreateView(LoginRequiredMixin, AdminRequiredMixin, CreateView):
         return super().form_valid(form)
 
 class HotelUpdateView(LoginRequiredMixin, AdminRequiredMixin, UpdateView):
+    """Allows staff to modify hotel details."""
     model = Hotel
     form_class = HotelForm
     success_url = reverse_lazy('hotel_list')
@@ -71,6 +79,7 @@ class HotelUpdateView(LoginRequiredMixin, AdminRequiredMixin, UpdateView):
         return Hotel.objects.all()
 
 class HotelDeleteView(LoginRequiredMixin, AdminRequiredMixin, DeleteView):
+    """Allows staff to remove a hotel from the system."""
     model = Hotel
     success_url = reverse_lazy('hotel_list')
     template_name = 'hotel/hotel_confirm_delete.html'
@@ -79,13 +88,14 @@ class HotelDeleteView(LoginRequiredMixin, AdminRequiredMixin, DeleteView):
         return Hotel.objects.all()
 
 class HotelDetailView(DetailView):
+    """Displays detailed information about a specific hotel including amenities."""
     model = Hotel
     template_name = 'hotel/hotel_detail.html'
     context_object_name = 'hotel'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # Convert amenities string to list
+        # Convert the comma-separated amenities string into a list for template iteration
         if self.object.amenities:
             context['amenity_list'] = [a.strip() for a in self.object.amenities.split(',')]
         else:
@@ -93,16 +103,18 @@ class HotelDetailView(DetailView):
         return context
 
 
-# Scoped Room Views
+# --- Room Management Views ---
+
 class RoomListView(LoginRequiredMixin, ListView):
+    """Displays a list of all rooms across all hotels."""
     model = Room
     template_name = 'hotel/room_list.html'
 
     def get_queryset(self):
         return Room.objects.all()
 
-
 class RoomCreateView(LoginRequiredMixin, AdminRequiredMixin, CreateView):
+    """Allows staff to create a new room and assign it to a hotel."""
     model = Room
     form_class = RoomForm
     success_url = reverse_lazy('room_list')
@@ -113,8 +125,8 @@ class RoomCreateView(LoginRequiredMixin, AdminRequiredMixin, CreateView):
         form.fields['hotel'].queryset = Hotel.objects.all()
         return form
 
-
 class RoomUpdateView(LoginRequiredMixin, AdminRequiredMixin, UpdateView):
+    """Allows staff to update room specifications or availability."""
     model = Room
     form_class = RoomForm
     success_url = reverse_lazy('room_list')
@@ -128,8 +140,8 @@ class RoomUpdateView(LoginRequiredMixin, AdminRequiredMixin, UpdateView):
         form.fields['hotel'].queryset = Hotel.objects.all()
         return form
 
-
 class RoomDeleteView(LoginRequiredMixin, AdminRequiredMixin, DeleteView):
+    """Allows staff to delete a room."""
     model = Room
     success_url = reverse_lazy('room_list')
     template_name = 'hotel/room_confirm_delete.html'
@@ -138,8 +150,14 @@ class RoomDeleteView(LoginRequiredMixin, AdminRequiredMixin, DeleteView):
         return Room.objects.all()
 
 
-# Scoped Booking Views
+# --- Booking Management Views ---
+
 class BookingListView(LoginRequiredMixin, ListView):
+    """
+    Displays bookings. 
+    Staff see all bookings, while regular users see only their own.
+    Includes booking statistics in context.
+    """
     model = Booking
     template_name = 'hotel/booking_list.html'
     context_object_name = 'bookings'
@@ -160,8 +178,8 @@ class BookingListView(LoginRequiredMixin, ListView):
         }
         return context
 
-
 class BookingCreateView(LoginRequiredMixin, CreateView):
+    """Allows users to book a room. Passes the user object to the form for filtering available rooms."""
     model = Booking
     form_class = BookingForm
     success_url = reverse_lazy('booking_list')
@@ -176,8 +194,8 @@ class BookingCreateView(LoginRequiredMixin, CreateView):
         form.instance.user = self.request.user
         return super().form_valid(form)
 
-
 class BookingUpdateView(LoginRequiredMixin, UpdateView):
+    """Allows users or staff to modify an existing booking."""
     model = Booking
     form_class = BookingForm
     success_url = reverse_lazy('booking_list')
@@ -193,8 +211,8 @@ class BookingUpdateView(LoginRequiredMixin, UpdateView):
         kwargs['user'] = self.request.user
         return kwargs
 
-
 class BookingDeleteView(LoginRequiredMixin, AdminRequiredMixin, DeleteView):
+    """Allows staff to delete a booking record."""
     model = Booking
     success_url = reverse_lazy('booking_list')
     template_name = 'hotel/booking_confirm_delete.html'
@@ -203,6 +221,7 @@ class BookingDeleteView(LoginRequiredMixin, AdminRequiredMixin, DeleteView):
         return Booking.objects.all()
 
 def update_booking_status(request, pk, status):
+    """Quick action view for staff to change booking status (e.g., Check-In/Out)."""
     if not request.user.is_staff:
         return redirect('booking_list')
     booking = Booking.objects.get(pk=pk)
@@ -212,6 +231,7 @@ def update_booking_status(request, pk, status):
     return redirect('booking_list')
 
 def booking_bill(request, pk):
+    """Generates and displays a billing summary for a specific booking."""
     if not request.user.is_authenticated:
         return redirect('login')
     booking = get_object_or_404(Booking, pk=pk)
@@ -230,7 +250,11 @@ def booking_bill(request, pk):
     }
     return render(request, 'hotel/bill.html', context)
 
+
+# --- User Profile Views ---
+
 class ProfileView(LoginRequiredMixin, DetailView):
+    """Displays the user's profile information and their booking history."""
     model = Profile
     template_name = 'hotel/profile.html'
     context_object_name = 'profile'
@@ -244,6 +268,7 @@ class ProfileView(LoginRequiredMixin, DetailView):
         return context
 
 class ProfileUpdateView(LoginRequiredMixin, UpdateView):
+    """Allows users to update their profile information (loyalty points, photo)."""
     model = Profile
     form_class = ProfileUpdateForm
     template_name = 'hotel/profile_form.html'
@@ -253,11 +278,13 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
         return self.request.user.profile
 
 class UserListView(LoginRequiredMixin, AdminRequiredMixin, ListView):
+    """Allows staff to view a list of all registered users."""
     model = User
     template_name = 'hotel/user_list.html'
     context_object_name = 'users'
 
 class UserDeleteView(LoginRequiredMixin, AdminRequiredMixin, DeleteView):
+    """Allows staff to delete a user account."""
     model = User
     template_name = 'hotel/user_confirm_delete.html'
     success_url = reverse_lazy('user_list')
